@@ -1,0 +1,125 @@
+<% layout("layouts/boilerplate") %>
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+
+
+    <div class="container pt-3 pb-5" style="padding-top: 20px; padding-bottom: 48px;">
+
+        <!-- Search Bar -->
+        <div class="search-section">
+            <form action="/listings" method="GET" class="search-bar">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" name="q" placeholder="Search destinations, listings..." value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>">
+                <button type="submit" class="search-btn">Search</button>
+            </form>
+        </div>
+
+        <!-- Category Filter Strip -->
+        <div class="category-strip">
+            <a href="/listings?q=trending" class="cat-item <%= typeof category !== 'undefined' && category === 'trending'      ? 'active' : '' %>"><i class="fa-solid fa-fire"></i>Trending</a>
+            <a href="/listings?q=rooms" class="cat-item <%= typeof category !== 'undefined' && category === 'rooms'         ? 'active' : '' %>"><i class="fa-solid fa-door-open"></i>Rooms</a>
+            <a href="/listings?q=City" class="cat-item <%= typeof category !== 'undefined' && category === 'iconic-cities' ? 'active' : '' %>"><i class="fa-solid fa-city"></i>City</a>
+            <a href="/listings?q=Mountains" class="cat-item <%= typeof category !== 'undefined' && category === 'Mountains'     ? 'active' : '' %>"><i class="fa-solid fa-mountain"></i>Mountains</a>
+            <a href="/listings?q=Castle" class="cat-item <%= typeof category !== 'undefined' && category === 'castles'       ? 'active' : '' %>"><i class="fa-solid fa-chess-rook"></i>Castle</a>
+            <a href="/listings?q=amazing-pools" class="cat-item <%= typeof category !== 'undefined' && category === 'amazing-pools' ? 'active' : '' %>"><i class="fa-solid fa-water-ladder"></i>Amazing Pools</a>
+            <a href="/listings?q=Beach" class="cat-item <%= category === 'Beach' ? 'active' : '' %>">
+                <i class="fa-solid fa-umbrella-beach"></i>Beach
+            </a>
+
+            <a href="/listings?q=Mountains" class="cat-item <%= category === 'Mountains' ? 'active' : '' %>">
+                <i class="fa-solid fa-mountain"></i>Mountains
+            </a>
+
+            <a href="/listings?q=Camping" class="cat-item <%= category === 'Camping' ? 'active' : '' %>">
+                <i class="fa-solid fa-tent"></i>Camping
+            </a>
+
+            <a href="/listings?q=Arctic" class="cat-item <%= category === 'Arctic' ? 'active' : '' %>">
+                <i class="fa-solid fa-snowflake"></i>Arctic
+            </a>
+
+            <a href="/listings?q=Desert" class="cat-item <%= category === 'Desert' ? 'active' : '' %>">
+                <i class="fa-solid fa-sun"></i>Desert
+            </a>
+
+            <a href="/listings?q=Forest" class="cat-item <%= category === 'Forest' ? 'active' : '' %>">
+                <i class="fa-solid fa-tree"></i>Forest
+            </a>
+
+            <a href="/listings?q=Lake" class="cat-item <%= category === 'Lake' ? 'active' : '' %>">
+                <i class="fa-solid fa-water"></i>Lake
+            </a>
+
+            <a href="/listings?q=City" class="cat-item <%= category === 'City' ? 'active' : '' %>">
+                <i class="fa-solid fa-city"></i>City
+            </a>
+
+            <a href="/listings?q=Countryside" class="cat-item <%= category === 'Countryside' ? 'active' : '' %>">
+                <i class="fa-solid fa-house-flag"></i>Countryside
+            </a>
+
+            <a href="/listings?q=Historical" class="cat-item <%= category === 'Historical' ? 'active' : '' %>">
+                <i class="fa-solid fa-landmark"></i>Historical
+            </a>
+
+            <a href="/listings?q=Castle" class="cat-item <%= category === 'Castle' ? 'active' : '' %>">
+                <i class="fa-solid fa-chess-rook"></i>Castle
+            </a>
+
+            <a href="/listings?q=Farm" class="cat-item <%= category === 'Farm' ? 'active' : '' %>">
+                <i class="fa-solid fa-tractor"></i>Farm
+            </a>
+
+            <a href="/listings?q=Luxury" class="cat-item <%= category === 'Luxury' ? 'active' : '' %>">
+                <i class="fa-solid fa-gem"></i>Luxury
+            </a>
+
+            <a href="/listings?q=Adventure" class="cat-item <%= category === 'Adventure' ? 'active' : '' %>">
+                <i class="fa-solid fa-person-hiking"></i>Adventure
+            </a>
+        </div>
+
+        <!-- Page Heading -->
+        <div class="text-center mb-5 mt-4">
+            <h2 class="page-title mb-1">Explore Listings</h2>
+            <p class="page-subtitle mb-0">Find your perfect stay</p>
+        </div>
+
+        <!-- Listing Cards -->
+        <div class="row g-4">
+            <% for(let listing of allListings) { %>
+                <div class="col-lg-4 col-md-6">
+                    <a href="/listings/<%= listing._id %>" class="listing-link">
+                        <div class="listing-card h-100">
+                            <div class="img-wrapper">
+                                <img src="<%= listing.image.url %>" class="listing-img" alt="<%= listing.title %>">
+                                <div class="wishlist-btn"><i class="fa-regular fa-heart"></i></div>
+                            </div>
+                            <div class="card-body-inner d-flex flex-column">
+                                <div class="d-flex justify-content-between align-items-start gap-2 mb-1">
+                                    <h5 class="listing-title">
+                                        <%= listing.title %>
+                                    </h5>
+                                    <div class="listing-rating"><i class="fa-solid fa-star star-icon"></i> 4.9</div>
+                                </div>
+                                <p class="listing-location">
+                                    <i class="fa-solid fa-location-dot pin-icon"></i>
+                                    <%= listing.location %>,
+                                        <%= listing.country %>
+                                </p>
+                                <p class="listing-desc">
+                                    <%= listing.description %>...</p>
+                                <div class="listing-footer d-flex justify-content-between align-items-center mt-auto">
+                                    <div class="listing-price">₹
+                                        <%= listing.price.toLocaleString("en-IN") %><span>/ night</span></div>
+                                    <div class="cta-link d-flex align-items-center gap-1">View details <i class="fa-solid fa-arrow-right"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <% } %>
+        </div>
+
+    </div>

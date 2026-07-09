@@ -1,0 +1,95 @@
+<% layout("layouts/boilerplate") %>
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+        .input-icon-wrap~.invalid-feedback,
+        .input-prefix~.invalid-feedback {
+            display: none;
+        }
+        
+        .was-validated .input-icon-wrap:has(input:invalid)~.invalid-feedback,
+        .was-validated .input-prefix:has(input:invalid)~.invalid-feedback {
+            display: block;
+        }
+    </style>
+
+    <div class="form-page">
+        <div class="form-card">
+
+            <div class="form-header">
+                <h3>Edit your listing</h3>
+                <p>Update the details below and save your changes</p>
+            </div>
+
+            <form method="POST" action="/listings/<%= doc._id %>?_method=PUT" class="needs-validation" novalidate enctype="multipart/form-data">
+
+                <div class="mb-3">
+                    <label class="form-label">Title</label>
+                    <input name="listing[title]" type="text" class="form-control" value="<%= doc.title %>" placeholder="e.g. Cozy beachfront villa in Goa" required>
+                    <div class="invalid-feedback">Enter a valid title</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea name="listing[description]" class="form-control" placeholder="Describe what makes your place special..." required><%= doc.description %></textarea>
+                    <div class="invalid-feedback">Enter a valid description</div>
+                </div>
+
+
+                <div class="mb-3">
+                    <label class="form-label">Present Image</label>
+
+                    <img src="<%= doc.image.url %>" alt="listing_image" class="img-fluid rounded border" style="height: 250px; width: 100%; object-fit: cover;">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Upload ImageL</label>
+                    <div class="input-icon-wrap">
+                        <i class="fa-regular fa-image input-icon"></i>
+                        <input name="listing[image][url]" type="file" class="form-control" value="<%= doc.image.url %>" placeholder="https://example.com/image.jpg">
+                    </div>
+                    <div class="invalid-feedback">Enter a valid image URL</div>
+                </div>
+
+                <div class="section-divider">Pricing &amp; Location</div>
+
+                <div class="row g-3 mb-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label">Price per night</label>
+                        <div class="input-prefix">
+                            <span>₹</span>
+                            <input name="listing[price]" type="number" class="form-control" value="<%= doc.price %>" placeholder="0" required>
+                        </div>
+                        <div class="invalid-feedback">Enter a valid price</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Country</label>
+                        <div class="input-icon-wrap">
+                            <i class="fa-solid fa-earth-asia input-icon"></i>
+                            <input name="listing[country]" type="text" class="form-control" value="<%= doc.country %>" placeholder="e.g. India" required>
+                        </div>
+                        <div class="invalid-feedback">Enter a valid country</div>
+                    </div>
+
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Location</label>
+                    <div class="input-icon-wrap">
+                        <i class="fa-solid fa-location-dot input-icon"></i>
+                        <input name="listing[location]" type="text" class="form-control" value="<%= doc.location %>" placeholder="e.g. Manali, Himachal Pradesh" required>
+                    </div>
+                    <div class="invalid-feedback">Enter a valid location</div>
+                </div>
+
+                <div class="d-flex align-items-center gap-3">
+                    <button type="submit" class="btn-submit">Save changes</button>
+                    <a href="/listings/<%= doc._id %>" class="btn-cancel">Discard</a>
+                </div>
+
+            </form>
+        </div>
+    </div>

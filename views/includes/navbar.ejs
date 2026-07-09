@@ -1,0 +1,133 @@
+<nav class="navbar navbar-expand-lg sticky-top border-bottom" style="background:#faf7f2; border-color:#e8e0d5 !important;">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-semibold" href="/" style="font-family:'Georgia',serif; font-size:1.5rem; letter-spacing:0.01em; color:#3d2b1f;">
+            Haven<span style="color:#c9973a;">Stay</span>
+        </a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-link active" href="/">Home</a>
+                <a class="nav-link" href="/listings/new">Add New Listing</a>
+                <a class="nav-link" href="/listings">All Listings</a>
+            </div>
+            <div class="navbar-nav ms-auto align-items-center">
+                <% if (currUser) { %>
+                    <div class="dropdown">
+                        <!-- Pill trigger with avatar + name -->
+                        <button class="btn d-flex align-items-center gap-2 dropdown-toggle px-2 py-1 haven-profile-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="haven-avatar">
+                                <%= currUser.username.charAt(0).toUpperCase() %>
+                            </span>
+                            <span class="d-none d-sm-inline haven-username">
+                                <%= currUser.username %>
+                            </span>
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-menu-end mt-2 haven-dropdown">
+                            <!-- Username header -->
+                            <li class="px-3 py-2 d-flex align-items-center gap-2">
+                                <span class="haven-avatar">
+                                    <%= currUser.username.charAt(0).toUpperCase() %>
+                                </span>
+                                <span style="font-family:'DM Sans',sans-serif; font-size:0.92rem; font-weight:600; color:#3d2b1f;">
+                                    <%= currUser.username %>
+                                </span>
+                            </li>
+
+                            <li>
+                                <hr class="dropdown-divider my-1" style="border-color:#e8e0d5;">
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item haven-item d-flex align-items-center gap-2" href="/listings/my-listings">
+                                    <i class="fa-regular fa-building" style="color:#c9973a; width:16px;"></i> My Listings
+                                </a>
+                            </li>
+
+                            <li>
+                                <hr class="dropdown-divider my-1" style="border-color:#e8e0d5;">
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item haven-item d-flex align-items-center gap-2" href="/logout">
+                                    <i class="fa-solid fa-arrow-right-from-bracket" style="color:#c9973a; width:16px;"></i> Log out
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <% } else { %>
+                        <a class="nav-link" href="/login">Log in</a>
+                        <a class="btn btn-sm ms-2" href="/signup" style="background:#3d2b1f; color:#fff; border-radius:6px; padding:0.4rem 1.1rem;">Sign up</a>
+                        <% } %>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<style>
+    .haven-profile-btn {
+        background: none;
+        border: 1.5px solid #e8e0d5;
+        border-radius: 50px;
+        color: #3d2b1f;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.9rem;
+        transition: background 0.18s, border-color 0.18s;
+    }
+    
+    .haven-profile-btn:hover,
+    .haven-profile-btn:focus,
+    .haven-profile-btn:active,
+    .haven-profile-btn.show {
+        background: #f0e9df !important;
+        border-color: #c9973a !important;
+        color: #3d2b1f !important;
+        box-shadow: none !important;
+    }
+    
+    .haven-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: #3d2b1f;
+        color: #faf7f2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        font-weight: 700;
+        flex-shrink: 0;
+        border: 2px solid #c9973a;
+    }
+    
+    .haven-username {
+        max-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    .haven-dropdown {
+        min-width: 200px;
+        border-radius: 10px;
+        background: #faf7f2;
+        border: 1.5px solid #e8e0d5 !important;
+        box-shadow: 0 8px 24px rgba(61, 43, 31, 0.10);
+        padding: 6px 0;
+    }
+    
+    .haven-item {
+        font-size: 0.88rem;
+        font-family: 'DM Sans', sans-serif;
+        color: #3d2b1f !important;
+        padding: 0.5rem 1rem;
+    }
+    
+    .haven-item:hover,
+    .haven-item:focus {
+        background: #f0e9df !important;
+        color: #3d2b1f !important;
+    }
+</style>

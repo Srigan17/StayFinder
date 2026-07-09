@@ -1,0 +1,272 @@
+/* ── Page wrapper ── */
+
+.form-page {
+    font-family: 'DM Sans', sans-serif;
+    background: #f8f7f4;
+    min-height: 100vh;
+    padding: 2.5rem 1rem;
+}
+
+
+/* ── Card container ── */
+
+.form-card {
+    background: #fff;
+    border-radius: 20px;
+    border: 0.5px solid rgba(0, 0, 0, 0.1);
+    padding: 2.5rem 2rem;
+    max-width: 620px;
+    margin: 0 auto;
+}
+
+
+/* ── Header ── */
+
+.form-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+}
+
+.form-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 4px;
+    letter-spacing: -0.02em;
+}
+
+.form-header p {
+    font-size: 0.82rem;
+    color: #999;
+    margin: 0;
+    font-weight: 300;
+}
+
+
+/* ── Labels ── */
+
+.form-label {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: #555;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+
+/* ── Inputs ── */
+
+.form-control {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    color: #1a1a1a;
+    background: #fafaf9;
+    border: 0.5px solid rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    padding: 0.65rem 0.9rem;
+    transition: border-color 0.2s, background 0.2s;
+    box-shadow: none;
+}
+
+.form-control:focus {
+    border-color: #1a1a1a;
+    background: #fff;
+    box-shadow: none;
+}
+
+.form-control::placeholder {
+    color: #bbb;
+    font-weight: 300;
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+}
+
+
+/* ── Icon inside input ── */
+
+.input-icon-wrap {
+    position: relative;
+}
+
+.input-icon-wrap .form-control {
+    padding-left: 2.4rem;
+}
+
+.input-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #bbb;
+    font-size: 14px;
+    pointer-events: none;
+}
+
+
+/* ── ₹ prefix input ── */
+
+.input-prefix {
+    display: flex;
+    align-items: center;
+    background: #fafaf9;
+    border: 0.5px solid rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+}
+
+.input-prefix:focus-within {
+    border-color: #1a1a1a;
+}
+
+.input-prefix span {
+    padding: 0 0.75rem;
+    font-size: 0.85rem;
+    color: #aaa;
+    border-right: 0.5px solid rgba(0, 0, 0, 0.1);
+    background: #f2f1ee;
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+}
+
+.input-prefix .form-control {
+    border: none;
+    background: transparent;
+    border-radius: 0;
+    padding-left: 0.75rem;
+}
+
+.input-prefix .form-control:focus {
+    background: transparent;
+}
+
+
+/* ── Section divider ── */
+
+.section-divider {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: #ccc;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 1.5rem 0 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-divider::before,
+.section-divider::after {
+    content: '';
+    flex: 1;
+    height: 0.5px;
+    background: rgba(0, 0, 0, 0.08);
+}
+
+
+/* ── Buttons ── */
+
+.btn-submit {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: #fff;
+    background: #1a1a1a;
+    border: none;
+    border-radius: 10px;
+    padding: 0.7rem 2rem;
+    transition: background 0.2s, transform 0.15s;
+    cursor: pointer;
+}
+
+.btn-submit:hover {
+    background: #333;
+}
+
+.btn-submit:active {
+    transform: scale(0.98);
+}
+
+.btn-cancel {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 400;
+    color: #888;
+    background: transparent;
+    border: 0.5px solid rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s;
+}
+
+.btn-cancel:hover {
+    border-color: #888;
+    color: #444;
+}
+
+
+/* Category Select */
+
+.category-select {
+    height: 56px;
+    border: 1.5px solid #e6ddd2;
+    border-radius: 16px;
+    background: #fff;
+    color: #4a3b2f;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 0 1rem 0 3rem;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+    transition: all 0.25s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
+.category-select:focus {
+    border-color: #8b5e34;
+    box-shadow: 0 0 0 4px rgba(139, 94, 52, .15);
+}
+
+
+/* Wrapper */
+
+.category-wrap {
+    position: relative;
+}
+
+
+/* Left Icon */
+
+.category-wrap .input-icon {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8b5e34;
+    z-index: 2;
+}
+
+
+/* Right Arrow */
+
+.category-wrap::after {
+    content: "\f107";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8b5e34;
+    pointer-events: none;
+}

@@ -1,0 +1,39 @@
+<% layout("/layouts/boilerplate") %>
+
+    <div class="signup-wrapper">
+        <div class="signup-card">
+
+            <div class="signup-header">
+                <div class="brand-label">Haven Stay</div>
+                <h1>Create your account</h1>
+                <p>Find your perfect place to stay</p>
+            </div>
+
+            <div class="signup-body">
+                <form action="/login" method="POST" novalidate class="needs-validation" id="signup-form">
+                    <div class="mb-3">
+                        <label class="form-label-custom" for="username">Username</label>
+                        <input type="text" class="form-control form-control-custom" id="username" name="username" placeholder="janedoe" required />
+                        <div class="invalid-feedback">Please choose a username.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label-custom" for="password">Password</label>
+                        <input type="password" class="form-control form-control-custom" id="password" name="password" placeholder="••••••••" required />
+                        <div class="invalid-feedback">Please enter a password.</div>
+                    </div>
+                    <button type="submit" class="btn btn-signup w-100">Log in</button>
+
+                    <div class="signup-divider">
+                        <span>or</span>
+                    </div>
+
+                    <p class="signin-link">
+                        Dont have an account? <a href="/signup">Sign up</a>
+                    </p>
+
+                </form>
+            </div>
+
+        </div>
+    </div>

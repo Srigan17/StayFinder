@@ -1,0 +1,250 @@
+/* ── Signup Page ── */
+
+.signup-wrapper {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f5f0e8 0%, #ede4d3 100%);
+    padding: 2rem 1rem;
+}
+
+.signup-card {
+    background: #fff;
+    border-radius: 2px;
+    max-width: 460px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(80, 60, 30, 0.12), 0 2px 8px rgba(80, 60, 30, 0.08);
+    overflow: hidden;
+}
+
+
+/* Header */
+
+.signup-header {
+    background: #2c2218;
+    padding: 2.5rem 2.5rem 2rem;
+    text-align: center;
+}
+
+.brand-label {
+    letter-spacing: 0.25em;
+    font-size: 11px;
+    color: #b8996a;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.signup-header h1 {
+    color: #f5f0e8;
+    font-size: 1.75rem;
+    font-weight: 400;
+    margin: 0 0 0.5rem;
+    font-family: Georgia, serif;
+    letter-spacing: 0.02em;
+}
+
+.signup-header p {
+    color: #8a7a65;
+    font-size: 0.85rem;
+    margin: 0;
+    letter-spacing: 0.03em;
+}
+
+
+/* Body */
+
+.signup-body {
+    padding: 2.5rem;
+}
+
+
+/* Labels */
+
+.form-label-custom {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #8a7a65;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+
+/* Inputs */
+
+.form-control-custom {
+    border: 1px solid #e0d6c8 !important;
+    border-radius: 2px !important;
+    background: #faf8f4 !important;
+    font-family: Georgia, serif;
+    font-size: 0.9rem;
+    color: #2c2218;
+    padding: 0.65rem 0.85rem;
+    transition: border-color 0.2s;
+}
+
+.form-control-custom:focus {
+    border-color: #b8996a !important;
+    box-shadow: none !important;
+    background: #fff !important;
+}
+
+.form-control-custom.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+.form-control-custom.is-invalid~.invalid-feedback,
+.was-validated .form-control-custom:invalid~.invalid-feedback {
+    display: block;
+}
+
+
+/* Submit button */
+
+.btn-signup {
+    background: #2c2218;
+    color: #f5f0e8;
+    border: none;
+    padding: 0.85rem;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 600;
+    border-radius: 2px;
+    transition: background 0.2s;
+}
+
+.btn-signup:hover {
+    background: #b8996a;
+    color: #fff;
+}
+
+
+/* Divider */
+
+.signup-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+    color: #b8a898;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+}
+
+.signup-divider::before,
+.signup-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #e0d6c8;
+}
+
+
+/* Sign-in link */
+
+.signin-link {
+    text-align: center;
+    font-size: 13px;
+    color: #8a7a65;
+    margin: 0;
+}
+
+.signin-link a {
+    color: #2c2218;
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid #b8996a;
+}
+
+.signin-link a:hover {
+    color: #b8996a;
+}
+
+
+/* ── Error messages ── */
+
+.field-error {
+    display: none;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 0.38rem;
+    font-size: 0.775rem;
+    color: #b05235;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+}
+
+.field-error .err-icon {
+    font-size: 13px;
+    flex-shrink: 0;
+    line-height: 1;
+    color: #c0785c;
+}
+
+.field-input.is-invalid~.field-error {
+    display: flex;
+}
+
+
+/* ── Top toast banner ── */
+
+.form-toast {
+    display: none;
+    align-items: center;
+    gap: 0.55rem;
+    background: #fdf2ed;
+    border: 1px solid #ddb89e;
+    border-radius: 8px;
+    padding: 0.65rem 0.9rem;
+    margin-bottom: 1.1rem;
+    font-size: 0.82rem;
+    color: #7a3518;
+}
+
+.form-toast.visible {
+    display: flex;
+}
+
+.form-toast i {
+    font-size: 15px;
+    flex-shrink: 0;
+}
+
+
+/* ── Password strength bar ── */
+
+.invalid-feedback {
+    display: block;
+    margin-top: 6px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: rgba(220, 53, 69, 0.08);
+    border: 1px solid rgba(220, 53, 69, 0.2);
+    color: #dc3545;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.15rem rgba(220, 53, 69, 0.15);
+}
+
+.invalid-feedback {
+    display: block;
+    color: #e63946;
+    font-size: 0.85rem;
+    margin-top: 5px;
+    font-weight: 500;
+}
+
+.password-hint {
+    display: block;
+    margin-top: 6px;
+    color: #6c757d;
+    font-size: 0.8rem;
+}
