@@ -31,7 +31,7 @@ module.exports.signUp = async(req, res) => {
         req.login(registeredUser, (err) => {
             if (err) return next(err);
 
-            req.flash("success", "Welcome to StayFinder Stay!");
+            req.flash("success", "Welcome to StayFinder!");
             res.redirect("/listings");
         });
 
