@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg sticky-top border-bottom" style="background:#faf7f2; border-color:#e8e0d5 !important;">
     <div class="container-fluid">
         <a class="navbar-brand fw-semibold" href="/" style="font-family:'Georgia',serif; font-size:1.5rem; letter-spacing:0.01em; color:#3d2b1f;">
-            Haven<span style="color:#c9973a;">Stay</span>
+            StayFinder<span style="color:#c9973a;">Stay</span>
         </a>
         <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup">
             <span class="navbar-toggler-icon"></span>
@@ -16,19 +16,19 @@
                 <% if (currUser) { %>
                     <div class="dropdown">
                         <!-- Pill trigger with avatar + name -->
-                        <button class="btn d-flex align-items-center gap-2 dropdown-toggle px-2 py-1 haven-profile-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <span class="haven-avatar">
+                        <button class="btn d-flex align-items-center gap-2 dropdown-toggle px-2 py-1 StayFinder-profile-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="StayFinder-avatar">
                                 <%= currUser.username.charAt(0).toUpperCase() %>
                             </span>
-                            <span class="d-none d-sm-inline haven-username">
+                            <span class="d-none d-sm-inline StayFinder-username">
                                 <%= currUser.username %>
                             </span>
                         </button>
 
-                        <ul class="dropdown-menu dropdown-menu-end mt-2 haven-dropdown">
+                        <ul class="dropdown-menu dropdown-menu-end mt-2 StayFinder-dropdown">
                             <!-- Username header -->
                             <li class="px-3 py-2 d-flex align-items-center gap-2">
-                                <span class="haven-avatar">
+                                <span class="StayFinder-avatar">
                                     <%= currUser.username.charAt(0).toUpperCase() %>
                                 </span>
                                 <span style="font-family:'DM Sans',sans-serif; font-size:0.92rem; font-weight:600; color:#3d2b1f;">
@@ -41,7 +41,7 @@
                             </li>
 
                             <li>
-                                <a class="dropdown-item haven-item d-flex align-items-center gap-2" href="/listings/my-listings">
+                                <a class="dropdown-item StayFinder-item d-flex align-items-center gap-2" href="/listings/my-listings">
                                     <i class="fa-regular fa-building" style="color:#c9973a; width:16px;"></i> My Listings
                                 </a>
                             </li>
@@ -51,7 +51,7 @@
                             </li>
 
                             <li>
-                                <a class="dropdown-item haven-item d-flex align-items-center gap-2" href="/logout">
+                                <a class="dropdown-item StayFinder-item d-flex align-items-center gap-2" href="/logout">
                                     <i class="fa-solid fa-arrow-right-from-bracket" style="color:#c9973a; width:16px;"></i> Log out
                                 </a>
                             </li>
@@ -67,7 +67,7 @@
 </nav>
 
 <style>
-    .haven-profile-btn {
+    .StayFinder-profile-btn {
         background: none;
         border: 1.5px solid #e8e0d5;
         border-radius: 50px;
@@ -77,17 +77,17 @@
         transition: background 0.18s, border-color 0.18s;
     }
     
-    .haven-profile-btn:hover,
-    .haven-profile-btn:focus,
-    .haven-profile-btn:active,
-    .haven-profile-btn.show {
+    .StayFinder-profile-btn:hover,
+    .StayFinder-profile-btn:focus,
+    .StayFinder-profile-btn:active,
+    .StayFinder-profile-btn.show {
         background: #f0e9df !important;
         border-color: #c9973a !important;
         color: #3d2b1f !important;
         box-shadow: none !important;
     }
     
-    .haven-avatar {
+    .StayFinder-avatar {
         width: 30px;
         height: 30px;
         border-radius: 50%;
@@ -102,14 +102,14 @@
         border: 2px solid #c9973a;
     }
     
-    .haven-username {
+    .StayFinder-username {
         max-width: 120px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
     }
     
-    .haven-dropdown {
+    .StayFinder-dropdown {
         min-width: 200px;
         border-radius: 10px;
         background: #faf7f2;
@@ -118,15 +118,15 @@
         padding: 6px 0;
     }
     
-    .haven-item {
+    .StayFinder-item {
         font-size: 0.88rem;
         font-family: 'DM Sans', sans-serif;
         color: #3d2b1f !important;
         padding: 0.5rem 1rem;
     }
     
-    .haven-item:hover,
-    .haven-item:focus {
+    .StayFinder-item:hover,
+    .StayFinder-item:focus {
         background: #f0e9df !important;
         color: #3d2b1f !important;
     }

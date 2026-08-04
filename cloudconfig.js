@@ -10,7 +10,7 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
-        folder: 'HavenStay',
+        folder: 'StayFinder',
         allowedFormats: ["png", "jpg", "jpeg"] // supports promises as well
 
     },

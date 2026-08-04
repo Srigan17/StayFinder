@@ -9,7 +9,7 @@ async function getCoordinates(location) {
                 limit: 1,
             },
             headers: {
-                "User-Agent": "HavenStay"
+                "User-Agent": "StayFinder"
             }
         }
     );
