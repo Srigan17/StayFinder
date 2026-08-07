@@ -1,92 +1,105 @@
+require("dotenv").config({ path: "../.env" });
 const mongoose = require("mongoose");
 const initData = require("./data.js");
-const axios = require("axios");
+const Listing = require("../models/listing.js");
+const User = require("../models/user.js");
+const Review = require("../models/review.js");
 
-
-const Listing = require("../models/listing.js")
-
-const delay = (ms) =>
-    new Promise(resolve => setTimeout(resolve, ms));
-
-main().then(() => {
-    console.log("Conneyted TO DB")
-}).catch((err) => {
-    console.log(err);
-})
+const defaultDbUrl = "mongodb://127.0.0.1:27017/wanderlust";
+const dbUrl = process.env.ATLAS_DB_URL || defaultDbUrl;
 
 async function main() {
-    await mongoose.connect('mongodb://127.0.0.1:27017/wanderlust');
+    try {
+        await mongoose.connect(dbUrl, { serverSelectionTimeoutMS: 3000 });
+        console.log("Connected to MongoDB via:", dbUrl);
+    } catch (err) {
+        console.log("Failed to connect to primary DB, falling back to local MongoDB:", err.message);
+        await mongoose.connect(defaultDbUrl);
+        console.log("Connected to local MongoDB:", defaultDbUrl);
+    }
 }
+
+const sampleReviewComments = [
+    { rating: 5, comment: "Absolutely breathtaking! The views were even better than the photos. Spotless and well maintained." },
+    { rating: 5, comment: "One of the most memorable stays of our lives. The hosts were incredibly welcoming and helpful." },
+    { rating: 4, comment: "Fantastic location and great amenities. Super comfortable bed and very peaceful atmosphere." },
+    { rating: 5, comment: "A hidden gem. Everything from check-in to check-out was seamless. Highly recommended!" },
+    { rating: 5, comment: "Stunning architecture and immaculate cleanliness. We cannot wait to visit again next year!" }
+];
 
 const initDB = async() => {
-    await Listing.deleteMany({});
-    initData.data.forEach((obj) => {
-        obj.owner = "6a242790878226e54ecab1f1";
-    });
+    try {
+        await Listing.deleteMany({});
+        await Review.deleteMany({});
 
-    initData.data.forEach((obj) => {
-        obj.owner = "6a242790878226e54ecab1f1";
+        // 1. Ensure a demo host user exists
+        let hostUser = await User.findOne({ username: "stayfinder_host" });
+        if (!hostUser) {
+            hostUser = new User({ email: "host@stayfinder.com", username: "stayfinder_host" });
+            hostUser = await User.register(hostUser, "Password123!");
+            console.log("Created demo host user: stayfinder_host");
+        }
 
-        obj.geometry = {
-            lat: 16.3067,
-            lng: 80.4365
-        };
-    });
+        // 2. Ensure sample reviewer users exist
+        const reviewerNames = ["alex_travels", "priya_sharma", "marcus_k", "sophie_wanderer", "arjun_mehta"];
+        const reviewers = [];
+        for (let name of reviewerNames) {
+            let reviewer = await User.findOne({ username: name });
+            if (!reviewer) {
+                reviewer = new User({ email: `${name}@example.com`, username: name });
+                reviewer = await User.register(reviewer, "Password123!");
+            }
+            reviewers.push(reviewer);
+        }
 
+        console.log(`Prepared ${reviewers.length} reviewer accounts.`);
 
-    Listing.insertMany(initData.data);
-    console.log("data was inititialized");
-}
+        // 3. Prepare listings with valid owner and real coordinates
+        const preparedListings = [];
 
-// async function addCategories() {
+        for (let obj of initData.data) {
+            const listingData = { ...obj };
+            listingData.owner = hostUser._id;
 
-//     const listings = await Listing.find({});
+            // Preserve real coordinates if provided, else assign fallback
+            if (!listingData.geometry || !listingData.geometry.lat) {
+                listingData.geometry = {
+                    lat: 28.6139,
+                    lng: 77.2090
+                };
+            }
 
-//     for (let listing of listings) {
-//         const title = listing.title.toLowerCase();
+            // Create 3-5 real reviews for each listing
+            const listingReviews = [];
+            for (let i = 0; i < sampleReviewComments.length; i++) {
+                const sampleRev = sampleReviewComments[i];
+                const reviewer = reviewers[i % reviewers.length];
 
-//         if (
-//             title.includes("beach") ||
-//             title.includes("sea") ||
-//             title.includes("ocean")
-//         ) {
-//             listing.category = "Beach";
-//         } else if (
-//             title.includes("mountain") ||
-//             title.includes("hill") ||
-//             title.includes("peak")
-//         ) {
-//             listing.category = "Mountains";
-//         } else if (
-//             title.includes("camp") ||
-//             title.includes("tent")
-//         ) {
-//             listing.category = "Camping";
-//         } else if (
-//             title.includes("lake")
-//         ) {
-//             listing.category = "Lake";
-//         } else if (
-//             title.includes("farm")
-//         ) {
-//             listing.category = "Farm";
-//         } else if (
-//             title.includes("castle")
-//         ) {
-//             listing.category = "Castle";
-//         } else if (
-//             title.includes("luxury")
-//         ) {
-//             listing.category = "Luxury";
-//         } else {
-//             listing.category = "City"; // default
-//         }
-//         await listing.save();
-//     }
+                const revDoc = new Review({
+                    rating: sampleRev.rating,
+                    comment: sampleRev.comment,
+                    owner: reviewer._id,
+                    createdAt: new Date(Date.now() - (i + 1) * 86400000 * 3)
+                });
+                await revDoc.save();
+                listingReviews.push(revDoc._id);
+            }
 
-//     console.log("Categories added successfully!");
-// }
+            listingData.reviews = listingReviews;
+            preparedListings.push(listingData);
+        }
 
-// addCategories();
+        await Listing.insertMany(preparedListings);
+        console.log(`Successfully initialized DB with ${preparedListings.length} rich location listings and guest reviews!`);
 
-initDB();
+    } catch (err) {
+        console.error("Error during DB initialization:", err);
+    } finally {
+        await mongoose.disconnect();
+        console.log("Mongoose disconnected.");
+    }
+};
+
+main().then(() => {
+    initDB();
+});

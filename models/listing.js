@@ -53,6 +53,30 @@ const listingSchema = new mongoose.Schema({
         default: "City"
 
     },
+    amenities: {
+        type: [String],
+        default: ["Wifi", "Air Conditioning", "Free Parking", "Kitchen", "Dedicated Workspace"]
+    },
+    rating: {
+        type: Number,
+        default: 4.88
+    },
+    guests: {
+        type: Number,
+        default: 4
+    },
+    bedrooms: {
+        type: Number,
+        default: 2
+    },
+    beds: {
+        type: Number,
+        default: 2
+    },
+    baths: {
+        type: Number,
+        default: 2
+    },
     aiSummary: {
         positives: [String],
         negatives: [String],
