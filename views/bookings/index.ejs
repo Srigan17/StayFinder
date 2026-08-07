@@ -1,0 +1,207 @@
+<% layout("layouts/boilerplate") %>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+    .bookings-page {
+        padding: 2.5rem 1rem 4rem;
+        background: #f8f7f4;
+        min-height: calc(100vh - 120px);
+    }
+    .booking-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #e8ddd0;
+        overflow: hidden;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: 0 4px 18px rgba(61, 43, 31, 0.04);
+        margin-bottom: 1.5rem;
+    }
+    .booking-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(61, 43, 31, 0.08);
+    }
+    .booking-img {
+        width: 100%;
+        height: 100%;
+        min-height: 200px;
+        object-fit: cover;
+    }
+    .booking-badge {
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        padding: 0.35rem 0.8rem;
+        border-radius: 50px;
+        display: inline-block;
+    }
+    .badge-confirmed {
+        background: #ecfdf5;
+        color: #065f46;
+        border: 1px solid #a7f3d0;
+    }
+    .badge-cancelled {
+        background: #fef2f2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+    .booking-code {
+        font-family: monospace;
+        font-weight: 700;
+        color: #c9973a;
+        background: #faf7f2;
+        padding: 0.2rem 0.6rem;
+        border-radius: 6px;
+        border: 1px solid #e8ddd0;
+        font-size: 0.85rem;
+    }
+    .empty-state {
+        text-align: center;
+        padding: 5rem 1rem;
+        background: #fff;
+        border-radius: 20px;
+        border: 1px solid #e8ddd0;
+        max-width: 600px;
+        margin: 2rem auto;
+    }
+    .empty-icon {
+        font-size: 3.5rem;
+        color: #c9973a;
+        margin-bottom: 1.25rem;
+    }
+</style>
+
+<div class="bookings-page">
+    <div class="container" style="max-width: 960px;">
+
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <div>
+                <h2 style="font-family: 'Playfair Display', serif; font-weight: 600; color: #3d2b1f; margin-bottom: 0.25rem;">
+                    My Reservations
+                </h2>
+                <p style="color: #7a6a5a; font-size: 0.95rem; margin: 0;">
+                    Manage your upcoming stays, itinerary details, and bookings
+                </p>
+            </div>
+            <a href="/listings" class="btn btn-dark" style="background: #3d2b1f; border: none; border-radius: 8px; padding: 0.6rem 1.4rem; font-size: 0.9rem;">
+                <i class="fa-solid fa-magnifying-glass me-1"></i> Explore More Stays
+            </a>
+        </div>
+
+        <% if (!bookings || bookings.length === 0) { %>
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fa-regular fa-calendar-xmark"></i>
+                </div>
+                <h3 style="font-family: 'Playfair Display', serif; color: #3d2b1f; margin-bottom: 0.5rem;">
+                    No Stays Booked Yet
+                </h3>
+                <p style="color: #7a6a5a; max-width: 420px; margin: 0 auto 1.5rem; font-size: 0.95rem;">
+                    You don't have any reservations confirmed right now. Browse our handpicked collection of villas, chalets, and lofts across the world!
+                </p>
+                <a href="/listings" class="btn btn-dark" style="background: #c9973a; border: none; border-radius: 8px; padding: 0.75rem 2rem; font-weight: 500;">
+                    Find Your Next Stay
+                </a>
+            </div>
+        <% } else { %>
+
+            <div class="row">
+                <% for (let booking of bookings) { %>
+                    <div class="col-12">
+                        <div class="booking-card">
+                            <div class="row g-0">
+                                <div class="col-md-4">
+                                    <% if (booking.listing && booking.listing.image && booking.listing.image.url) { %>
+                                        <img src="<%= booking.listing.image.url %>" class="booking-img" alt="<%= booking.listing.title %>">
+                                    <% } else { %>
+                                        <div style="background: #e8ddd0; height: 100%; min-height: 200px; display: flex; align-items: center; justify-content: center;">
+                                            <i class="fa-regular fa-image fa-2x text-muted"></i>
+                                        </div>
+                                    <% } %>
+                                </div>
+                                <div class="col-md-8 p-3 p-md-4 d-flex flex-column justify-content-between">
+                                    <div>
+                                        <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                                            <div>
+                                                <span class="booking-badge <%= booking.status === 'Confirmed' ? 'badge-confirmed' : 'badge-cancelled' %>">
+                                                    <%= booking.status %>
+                                                </span>
+                                                <span class="booking-code ms-2">
+                                                    <%= booking.bookingCode %>
+                                                </span>
+                                            </div>
+                                            <span style="font-size: 0.8rem; color: #888;">
+                                                Booked on <%= new Date(booking.createdAt).toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' }) %>
+                                            </span>
+                                        </div>
+
+                                        <h4 style="font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 0.35rem; color: #3d2b1f;">
+                                            <%= booking.listing ? booking.listing.title : 'Listing Unavailable' %>
+                                        </h4>
+
+                                        <% if (booking.listing) { %>
+                                            <p style="color: #7a6a5a; font-size: 0.88rem; margin-bottom: 0.85rem;">
+                                                <i class="fa-solid fa-location-dot text-danger me-1"></i>
+                                                <%= booking.listing.location %>, <%= booking.listing.country %>
+                                                <span class="badge bg-light text-dark border ms-2"><%= booking.listing.category %></span>
+                                            </p>
+                                        <% } %>
+
+                                        <div class="row g-2 py-2 mb-3 border-top border-bottom" style="font-size: 0.88rem; color: #4a3b32;">
+                                            <div class="col-6 col-sm-3">
+                                                <div class="text-muted" style="font-size: 0.75rem; text-transform: uppercase;">Check-in</div>
+                                                <strong><%= new Date(booking.checkIn).toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' }) %></strong>
+                                            </div>
+                                            <div class="col-6 col-sm-3">
+                                                <div class="text-muted" style="font-size: 0.75rem; text-transform: uppercase;">Check-out</div>
+                                                <strong><%= new Date(booking.checkOut).toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' }) %></strong>
+                                            </div>
+                                            <div class="col-6 col-sm-3">
+                                                <div class="text-muted" style="font-size: 0.75rem; text-transform: uppercase;">Duration</div>
+                                                <strong><%= booking.nights %> <%= booking.nights === 1 ? 'night' : 'nights' %></strong>
+                                            </div>
+                                            <div class="col-6 col-sm-3">
+                                                <div class="text-muted" style="font-size: 0.75rem; text-transform: uppercase;">Guests</div>
+                                                <strong><%= booking.guests %> <%= booking.guests === 1 ? 'guest' : 'guests' %></strong>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-2">
+                                        <div>
+                                            <span style="font-size: 0.8rem; color: #7a6a5a;">Total Paid (incl. taxes)</span>
+                                            <div style="font-size: 1.25rem; font-weight: 700; color: #3d2b1f;">
+                                                ₹<%= (booking.totalPrice || 0).toLocaleString("en-IN") %>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex gap-2">
+                                            <% if (booking.listing) { %>
+                                                <a href="/listings/<%= booking.listing._id %>" class="btn btn-outline-dark btn-sm" style="border-radius: 6px; padding: 0.4rem 0.9rem;">
+                                                    View Stay
+                                                </a>
+                                            <% } %>
+
+                                            <% if (booking.status === "Confirmed") { %>
+                                                <form action="/bookings/<%= booking._id %>/cancel" method="POST" onsubmit="return confirm('Are you sure you want to cancel this reservation?');" style="margin: 0;">
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm" style="border-radius: 6px; padding: 0.4rem 0.9rem;">
+                                                        Cancel Reservation
+                                                    </button>
+                                                </form>
+                                            <% } %>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+
+        <% } %>
+
+    </div>
+</div>
