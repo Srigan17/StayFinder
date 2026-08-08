@@ -7,409 +7,318 @@ import streamlit as st
 
 # ──────────────────────────── Page Config ────────────────────────────
 st.set_page_config(
-    page_title="StayFinder · Luxury Stays & Escapes",
+    page_title="StayFinder · Iconic Stays in India",
     page_icon="🏖️",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# ──────────────────────────── Custom CSS ────────────────────────────
+# ──────────────────────────── Custom Styling ────────────────────────────
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
     
     html, body, [class*="css"] {
         font-family: 'DM Sans', sans-serif;
     }
     
-    .main-header {
-        background: linear-gradient(135deg, #3d2b1f 0%, #221710 100%);
-        padding: 2.2rem 2rem;
-        border-radius: 18px;
+    .hero-banner {
+        background: linear-gradient(135deg, #3d2b1f 0%, #1f140e 100%);
+        padding: 2rem 2.2rem;
+        border-radius: 16px;
         color: #faf7f2;
-        margin-bottom: 2rem;
-        border: 1px solid #e8ddd0;
-        box-shadow: 0 8px 30px rgba(61, 43, 31, 0.15);
+        margin-bottom: 1.75rem;
+        box-shadow: 0 6px 24px rgba(61, 43, 31, 0.12);
+        border: 1px solid #c9973a;
     }
     
-    .brand-title {
+    .hero-title {
         font-family: 'Playfair Display', serif;
-        font-size: 2.5rem;
+        font-size: 2.2rem;
         font-weight: 700;
         color: #faf7f2;
         margin: 0;
-        letter-spacing: -0.01em;
     }
     
-    .brand-title span {
+    .hero-title span {
         color: #c9973a;
     }
     
-    .brand-sub {
-        color: #d1c7bc;
-        font-size: 1rem;
-        margin-top: 0.4rem;
-        font-weight: 300;
+    .hero-desc {
+        color: #d8cec3;
+        font-size: 0.95rem;
+        margin-top: 0.35rem;
     }
     
-    .stay-card {
-        background: #ffffff;
-        border: 1px solid #e8ddd0;
-        border-radius: 16px;
-        padding: 1.25rem;
-        margin-bottom: 1.5rem;
-        box-shadow: 0 4px 18px rgba(61, 43, 31, 0.05);
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-    
-    .stay-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 26px rgba(61, 43, 31, 0.12);
-        border-color: #c9973a;
-    }
-    
-    .badge-category {
+    .cat-chip {
         background: #f4ede3;
         color: #5c4738;
-        padding: 4px 10px;
-        border-radius: 20px;
+        padding: 3px 10px;
+        border-radius: 16px;
         font-size: 0.75rem;
         font-weight: 600;
         border: 1px solid #e2d5c5;
         display: inline-block;
     }
     
-    .stay-price-tag {
-        font-size: 1.3rem;
+    .price-text {
+        font-size: 1.25rem;
         font-weight: 700;
         color: #3d2b1f;
     }
     
-    .amenity-chip {
-        background: #fbf9f5;
-        border: 1px solid #e8ddd0;
-        border-radius: 6px;
-        padding: 3px 8px;
-        font-size: 0.75rem;
-        color: #5c4738;
-        margin-right: 4px;
-        margin-bottom: 4px;
-        display: inline-block;
+    .review-bubble {
+        background: #faf7f2;
+        border-left: 3px solid #c9973a;
+        padding: 10px 14px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        font-size: 0.88rem;
     }
     
-    .reservation-box {
-        background: #fbf9f5;
-        border: 1px solid #ecdcc8;
-        border-radius: 12px;
-        padding: 1rem;
-        margin-top: 1rem;
+    .review-author {
+        font-weight: 600;
+        color: #3d2b1f;
+    }
+    
+    .review-comment {
+        color: #5c4738;
+        margin-top: 2px;
     }
 </style>
 """, unsafe_allow_html=True)
 
 # ──────────────────────────── Data Loader ────────────────────────────
-@st.cache_data
-def load_data():
-    json_path = os.path.join(os.path.dirname(__file__), "data", "listings.json")
-    if os.path.exists(json_path):
-        with open(json_path, "r", encoding="utf-8") as f:
+def get_data_file():
+    return os.path.join(os.path.dirname(__file__), "data", "listings.json")
+
+def load_places():
+    path = get_data_file()
+    if os.path.exists(path):
+        with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
     return []
 
-if "listings_data" not in st.session_state:
-    st.session_state.listings_data = load_data()
+if "listings" not in st.session_state:
+    st.session_state.listings = load_places()
 
-if "reservations" not in st.session_state:
-    st.session_state.reservations = []
+if "bookings" not in st.session_state:
+    st.session_state.bookings = []
 
-# ──────────────────────────── Header Banner ────────────────────────────
+# ──────────────────────────── Hero Banner ────────────────────────────
 st.markdown("""
-<div class="main-header">
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-        <div>
-            <h1 class="brand-title">StayFinder<span>.</span></h1>
-            <p class="brand-sub">Discover handpicked villas, alpine chalets, and historic havelis across 35+ iconic destinations worldwide.</p>
-        </div>
-    </div>
+<div class="hero-banner">
+    <h1 class="hero-title">StayFinder<span>.</span> India</h1>
+    <p class="hero-desc">Explore handpicked stays across 6 famous destinations in India — Goa, Manali, Jaipur, Udaipur, Munnar, and Alleppey.</p>
 </div>
 """, unsafe_allow_html=True)
 
 # ──────────────────────────── Sidebar Filters ────────────────────────────
-st.sidebar.markdown("### 🔍 Filters & Search")
+st.sidebar.markdown("### 🔍 Search & Filters")
 
-search_query = st.sidebar.text_input("Destination, stay name, or keyword", placeholder="e.g. Goa, Paris, Manali, Villa...")
+search_kw = st.sidebar.text_input("Search destination or stay", placeholder="e.g. Goa, Manali, Villa...")
 
-categories = [
-    "All", "Beach", "Mountains", "Luxury", "City", "Historical",
-    "Castle", "Lake", "Forest", "Adventure", "Camping", "Desert",
-    "Arctic", "Countryside", "Farm"
-]
-selected_category = st.sidebar.selectbox("Category", categories)
+dest_options = ["All India", "Goa", "Manali", "Jaipur", "Udaipur", "Munnar", "Alleppey"]
+chosen_dest = st.sidebar.selectbox("Famous Destinations", dest_options)
 
-popular_dests = [
-    "All Destinations", "Goa", "Manali", "Jaipur", "Udaipur", "Kerala",
-    "Paris", "Santorini", "Swiss Alps", "Bali", "Kyoto", "Dubai", "New York", "Aspen"
-]
-selected_destination = st.sidebar.selectbox("Popular Destinations", popular_dests)
+cat_options = ["All Categories", "Beach", "Mountains", "Historical", "Castle", "Countryside", "Lake"]
+chosen_cat = st.sidebar.selectbox("Category", cat_options)
 
-price_range = st.sidebar.slider(
-    "Price per night (INR)",
-    min_value=2000,
-    max_value=30000,
-    value=(2000, 30000),
-    step=500
-)
+sort_by = st.sidebar.selectbox("Sort By", ["Recommended", "Price: Low to High", "Price: High to Low", "Top Rated"])
 
-sort_option = st.sidebar.selectbox(
-    "Sort By",
-    ["Featured", "Price: Low to High", "Price: High to Low", "Top Rated"]
-)
-
-tax_toggle = st.sidebar.toggle("Include 18% GST in prices", value=False)
+include_tax = st.sidebar.toggle("Include 18% GST in price", value=False)
 
 st.sidebar.markdown("---")
-st.sidebar.markdown(f"**Total Stays Available:** {len(st.session_state.listings_data)}")
-st.sidebar.markdown(f"**Active Bookings:** {len(st.session_state.reservations)}")
+st.sidebar.caption(f"**Total Places:** {len(st.session_state.listings)}")
+st.sidebar.caption(f"**Active Reservations:** {len(st.session_state.bookings)}")
 
-# ──────────────────────────── Filtering Logic ────────────────────────────
-filtered_listings = []
-for item in st.session_state.listings_data:
-    # 1. Text Search
-    if search_query:
-        query = search_query.lower()
-        title = item.get("title", "").lower()
-        desc = item.get("description", "").lower()
-        loc = item.get("location", "").lower()
-        country = item.get("country", "").lower()
-        cat = item.get("category", "").lower()
-        if not (query in title or query in desc or query in loc or query in country or query in cat):
+# ──────────────────────────── Filter & Sort Logic ────────────────────────────
+filtered = []
+for p in st.session_state.listings:
+    # Destination filter
+    if chosen_dest != "All India":
+        if chosen_dest.lower() not in p.get("location", "").lower():
             continue
 
-    # 2. Category Filter
-    if selected_category != "All":
-        if item.get("category") != selected_category:
+    # Category filter
+    if chosen_cat != "All Categories":
+        if p.get("category") != chosen_cat:
             continue
 
-    # 3. Destination Filter
-    if selected_destination != "All Destinations":
-        dest_q = selected_destination.lower()
-        loc = item.get("location", "").lower()
-        country = item.get("country", "").lower()
-        if dest_q not in loc and dest_q not in country:
+    # Search keyword
+    if search_kw:
+        q = search_kw.lower()
+        t = p.get("title", "").lower()
+        d = p.get("description", "").lower()
+        l = p.get("location", "").lower()
+        if not (q in t or q in d or q in l):
             continue
 
-    # 4. Price Filter
-    price = item.get("price", 0)
-    if not (price_range[0] <= price <= price_range[1]):
-        continue
+    filtered.append(p)
 
-    filtered_listings.append(item)
-
-# ──────────────────────────── Sorting Logic ────────────────────────────
-if sort_option == "Price: Low to High":
-    filtered_listings.sort(key=lambda x: x.get("price", 0))
-elif sort_option == "Price: High to Low":
-    filtered_listings.sort(key=lambda x: x.get("price", 0), reverse=True)
-elif sort_option == "Top Rated":
-    filtered_listings.sort(key=lambda x: x.get("rating", 4.9), reverse=True)
+if sort_by == "Price: Low to High":
+    filtered.sort(key=lambda x: x.get("price", 0))
+elif sort_by == "Price: High to Low":
+    filtered.sort(key=lambda x: x.get("price", 0), reverse=True)
+elif sort_by == "Top Rated":
+    filtered.sort(key=lambda x: x.get("rating", 4.9), reverse=True)
 
 # ──────────────────────────── Main Tabs ────────────────────────────
-tab_explore, tab_map, tab_reservations, tab_add = st.tabs([
-    f"🏨 Explore Stays ({len(filtered_listings)})",
-    "🗺️ Interactive World Map",
-    f"📅 My Reservations ({len(st.session_state.reservations)})",
-    "➕ Host: Add New Stay"
+tab_stays, tab_map, tab_res = st.tabs([
+    f"🏖️ Famous Stays in India ({len(filtered)})",
+    "🗺️ Map of Destinations",
+    f"📅 My Bookings ({len(st.session_state.bookings)})"
 ])
 
-# ──────────────────────────── Tab 1: Explore Stays ────────────────────────────
-with tab_explore:
-    if not filtered_listings:
-        st.warning("No stays match your current filter criteria. Try adjusting the search or price slider.")
+# ──────────────────────────── Tab 1: Stays & Reviews ────────────────────────────
+with tab_stays:
+    if not filtered:
+        st.info("No stays found matching your filter. Try selecting 'All India'.")
     else:
-        # Display listings in 2-column responsive layout
-        for i in range(0, len(filtered_listings), 2):
-            cols = st.columns(2, gap="medium")
-            for col_idx, item_idx in enumerate([i, i + 1]):
-                if item_idx < len(filtered_listings):
-                    item = filtered_listings[item_idx]
-                    with cols[col_idx]:
-                        with st.container():
-                            img_url = item.get("image", {}).get("url") if isinstance(item.get("image"), dict) else item.get("image", "")
-                            if img_url:
-                                st.image(img_url, use_container_width=True)
-                            
-                            col_t1, col_t2 = st.columns([3, 1])
-                            with col_t1:
-                                st.markdown(f"### {item.get('title')}")
-                                st.caption(f"📍 {item.get('location')}, {item.get('country')}")
-                            with col_t2:
-                                rating = item.get("rating", 4.9)
-                                st.markdown(f"⭐ **{rating}**")
-                                st.markdown(f"<span class='badge-category'>{item.get('category')}</span>", unsafe_allow_html=True)
+        for idx, stay in enumerate(filtered):
+            with st.container():
+                col_img, col_info = st.columns([1.2, 2], gap="large")
 
-                            st.write(item.get("description", ""))
+                # Image Column
+                with col_img:
+                    img_url = stay.get("image", {}).get("url") if isinstance(stay.get("image"), dict) else stay.get("image", "")
+                    if img_url:
+                        st.image(img_url, use_container_width=True)
 
-                            # Amenities
-                            amenities = item.get("amenities", [])
-                            if amenities:
-                                chips_html = " ".join([f"<span class='amenity-chip'>✓ {a}</span>" for a in amenities[:5]])
-                                st.markdown(chips_html, unsafe_allow_html=True)
+                # Info Column
+                with col_info:
+                    st.markdown(f"### {stay.get('title')}")
+                    st.caption(f"📍 **{stay.get('location')}**, {stay.get('country')} · ⭐ **{stay.get('rating', 4.9)}/5**")
+                    
+                    st.markdown(f"<span class='cat-chip'>{stay.get('category')}</span>", unsafe_allow_html=True)
+                    st.write(stay.get("description", ""))
 
-                            # Pricing
-                            base_price = item.get("price", 0)
-                            display_price = round(base_price * 1.18) if tax_toggle else base_price
-                            tax_text = "(18% GST included)" if tax_toggle else "+ taxes"
-                            st.markdown(f"<div class='stay-price-tag'>₹{display_price:,} <span style='font-size:0.85rem; font-weight:normal; color:#888;'>/ night {tax_text}</span></div>", unsafe_allow_html=True)
+                    # Amenities
+                    amenities = stay.get("amenities", [])
+                    if amenities:
+                        st.caption("✨ " + " · ".join(amenities[:5]))
 
-                            # Reservation Expander
-                            with st.expander(f"📅 Check Availability & Reserve: {item.get('title')}"):
-                                c_in, c_out = st.columns(2)
-                                today = date.today()
-                                with c_in:
-                                    check_in = st.date_input("Check-In", value=today + timedelta(days=1), min_value=today, key=f"in_{item_idx}_{item.get('title')[:10]}")
-                                with c_out:
-                                    check_out = st.date_input("Check-Out", value=today + timedelta(days=4), min_value=today + timedelta(days=1), key=f"out_{item_idx}_{item.get('title')[:10]}")
+                    # Price
+                    base = stay.get("price", 0)
+                    price_display = round(base * 1.18) if include_tax else base
+                    tax_note = "(18% GST included)" if include_tax else "+ taxes"
+                    st.markdown(f"<div class='price-text'>₹{price_display:,} <span style='font-size:0.85rem; font-weight:normal; color:#777;'>/ night {tax_note}</span></div>", unsafe_allow_html=True)
 
-                                guests = st.selectbox("Guests", options=[1, 2, 3, 4, 5, 6], index=1, key=f"g_{item_idx}_{item.get('title')[:10]}")
-
-                                nights = max(1, (check_out - check_in).days)
-                                subtotal = base_price * nights
-                                cleaning_fee = 600
-                                taxes = round(subtotal * 0.18)
-                                grand_total = subtotal + cleaning_fee + taxes
-
+                    # ── Guest Reviews Section ──
+                    reviews = stay.get("reviews", [])
+                    with st.expander(f"💬 Guest Reviews ({len(reviews)})"):
+                        if reviews:
+                            for rev in reviews:
                                 st.markdown(f"""
-                                <div class="reservation-box">
-                                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                                        <span>₹{base_price:,} × {nights} {'night' if nights == 1 else 'nights'}</span>
-                                        <strong>₹{subtotal:,}</strong>
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                                        <span>Cleaning fee</span>
-                                        <span>₹{cleaning_fee:,}</span>
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-                                        <span>GST &amp; Service Tax (18%)</span>
-                                        <span>₹{taxes:,}</span>
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between; border-top: 1px solid #ddd; padding-top: 6px; font-size: 1.1rem; color: #3d2b1f;">
-                                        <strong>Total Amount</strong>
-                                        <strong style="color: #c9973a;">₹{grand_total:,}</strong>
-                                    </div>
+                                <div class="review-bubble">
+                                    <div class="review-author">{'⭐' * rev.get('rating', 5)} {rev.get('author')} <span style="font-size:0.75rem; color:#888;">· {rev.get('date', '')}</span></div>
+                                    <div class="review-comment">"{rev.get('comment')}"</div>
                                 </div>
                                 """, unsafe_allow_html=True)
+                        else:
+                            st.caption("No reviews yet.")
 
-                                if st.button("Confirm Reservation", key=f"btn_book_{item_idx}_{item.get('title')[:10]}", type="primary"):
-                                    res_code = f"HS-{random.randint(100000, 999999)}"
-                                    reservation_entry = {
-                                        "code": res_code,
-                                        "title": item.get("title"),
-                                        "location": f"{item.get('location')}, {item.get('country')}",
-                                        "check_in": str(check_in),
-                                        "check_out": str(check_out),
-                                        "nights": nights,
-                                        "guests": guests,
-                                        "total": grand_total,
-                                        "image": img_url
-                                    }
-                                    st.session_state.reservations.insert(0, reservation_entry)
-                                    st.success(f"🎉 Reservation confirmed! Booking Code: **{res_code}**")
+                        # Add Review Form
+                        st.markdown("**Write a Review:**")
+                        with st.form(f"rev_form_{idx}"):
+                            r_author = st.text_input("Your Name", placeholder="e.g. Aditi")
+                            r_rating = st.selectbox("Rating", [5, 4, 3, 2, 1], index=0)
+                            r_comment = st.text_area("Your Review", placeholder="Share your experience...")
+                            if st.form_submit_button("Submit Review"):
+                                if r_author and r_comment:
+                                    if "reviews" not in stay:
+                                        stay["reviews"] = []
+                                    stay["reviews"].insert(0, {
+                                        "author": r_author,
+                                        "rating": r_rating,
+                                        "comment": r_comment,
+                                        "date": str(date.today())
+                                    })
+                                    st.success("Review posted successfully!")
                                     st.rerun()
+                                else:
+                                    st.error("Please provide both your name and review.")
 
-                            st.markdown("---")
+                    # ── Reservation Expander ──
+                    with st.expander("📅 Reserve this Stay"):
+                        today = date.today()
+                        c1, c2 = st.columns(2)
+                        with c1:
+                            cin = st.date_input("Check-In", value=today + timedelta(days=1), min_value=today, key=f"cin_{idx}")
+                        with c2:
+                            cout = st.date_input("Check-Out", value=today + timedelta(days=3), min_value=today + timedelta(days=1), key=f"cout_{idx}")
+
+                        guests_count = st.selectbox("Guests", [1, 2, 3, 4, 5, 6], index=1, key=f"gst_{idx}")
+                        nights = max(1, (cout - cin).days)
+                        total_room = base * nights
+                        cleaning = 600
+                        tax_amt = round(total_room * 0.18)
+                        grand = total_room + cleaning + tax_amt
+
+                        st.write(f"**Stay Duration:** {nights} {'night' if nights == 1 else 'nights'}")
+                        st.write(f"• Base rate: ₹{base:,} × {nights} = ₹{total_room:,}")
+                        st.write(f"• Cleaning fee: ₹{cleaning:,}")
+                        st.write(f"• 18% GST: ₹{tax_amt:,}")
+                        st.markdown(f"### Total: ₹{grand:,}")
+
+                        if st.button("Confirm Reservation", key=f"book_{idx}", type="primary"):
+                            code = f"HS-{random.randint(100000, 999999)}"
+                            st.session_state.bookings.insert(0, {
+                                "code": code,
+                                "title": stay.get("title"),
+                                "location": stay.get("location"),
+                                "check_in": str(cin),
+                                "check_out": str(cout),
+                                "nights": nights,
+                                "guests": guests_count,
+                                "total": grand,
+                                "image": img_url
+                            })
+                            st.success(f"🎉 Reservation Confirmed! Booking Code: **{code}**")
+                            st.rerun()
+
+                st.markdown("---")
 
 # ──────────────────────────── Tab 2: Map ────────────────────────────
 with tab_map:
-    st.markdown("### 🗺️ Explore Stays Worldwide")
-    st.caption("All locations plotted using their verified geographic coordinates.")
-
-    map_points = []
-    for item in filtered_listings:
-        geom = item.get("geometry", {})
-        if isinstance(geom, dict) and "lat" in geom and "lng" in geom:
-            map_points.append({
-                "latitude": geom["lat"],
-                "longitude": geom["lng"],
-                "title": item.get("title"),
-                "price": item.get("price"),
-                "location": item.get("location")
+    st.markdown("### 🗺️ Locations Across India")
+    points = []
+    for s in filtered:
+        g = s.get("geometry", {})
+        if isinstance(g, dict) and "lat" in g and "lng" in g:
+            points.append({
+                "latitude": g["lat"],
+                "longitude": g["lng"],
+                "title": s.get("title"),
+                "location": s.get("location"),
+                "price": s.get("price")
             })
 
-    if map_points:
-        df_map = pd.DataFrame(map_points)
-        st.map(df_map, latitude="latitude", longitude="longitude", size=20, color="#c9973a")
-        st.dataframe(
-            df_map[["title", "location", "price", "latitude", "longitude"]].rename(columns={"price": "Price (INR/night)"}),
-            use_container_width=True
-        )
-    else:
-        st.info("No coordinates available for current filter.")
+    if points:
+        df = pd.DataFrame(points)
+        st.map(df, latitude="latitude", longitude="longitude", size=25, color="#c9973a")
+        st.dataframe(df[["title", "location", "price"]], use_container_width=True)
 
 # ──────────────────────────── Tab 3: Reservations ────────────────────────────
-with tab_reservations:
-    st.markdown("### 📅 Your Bookings & Itinerary")
-
-    if not st.session_state.reservations:
-        st.info("You don't have any active reservations yet. Browse stays in the 'Explore Stays' tab to book your dream escape!")
+with tab_res:
+    st.markdown("### 📅 Your Bookings")
+    if not st.session_state.bookings:
+        st.info("No active reservations yet. Pick any stay from the 'Famous Stays' tab to reserve!")
     else:
-        for idx, res in enumerate(st.session_state.reservations):
+        for b_idx, b in enumerate(st.session_state.bookings):
             with st.container():
-                r_c1, r_c2, r_c3 = st.columns([1, 3, 1])
-                with r_c1:
-                    if res.get("image"):
-                        st.image(res["image"], use_container_width=True)
-                with r_c2:
-                    st.markdown(f"#### {res['title']}")
-                    st.caption(f"📍 {res['location']} · Reference: `{res['code']}`")
-                    st.write(f"**Dates:** {res['check_in']} to {res['check_out']} ({res['nights']} nights) · **Guests:** {res['guests']}")
-                    st.markdown(f"**Total Paid:** ₹{res['total']:,} (taxes included)")
-                with r_c3:
-                    if st.button("Cancel Booking", key=f"cancel_{idx}_{res['code']}"):
-                        st.session_state.reservations.pop(idx)
-                        st.warning(f"Booking {res['code']} has been cancelled.")
+                b1, b2, b3 = st.columns([1, 2.5, 1])
+                with b1:
+                    if b.get("image"):
+                        st.image(b["image"], use_container_width=True)
+                with b2:
+                    st.markdown(f"#### {b['title']}")
+                    st.caption(f"📍 {b['location']} · Reference: `{b['code']}`")
+                    st.write(f"📅 **Dates:** {b['check_in']} to {b['check_out']} ({b['nights']} nights) · **Guests:** {b['guests']}")
+                    st.markdown(f"**Total Paid:** ₹{b['total']:,}")
+                with b3:
+                    if st.button("Cancel Booking", key=f"cancel_{b_idx}"):
+                        st.session_state.bookings.pop(b_idx)
+                        st.warning(f"Booking {b['code']} cancelled.")
                         st.rerun()
-                st.markdown("---")
-
-# ──────────────────────────── Tab 4: Host New Stay ────────────────────────────
-with tab_add:
-    st.markdown("### ➕ List a New Property on StayFinder")
-    st.caption("Fill out the property specifications below to publish it instantly to the catalog.")
-
-    with st.form("new_stay_form", clear_on_submit=True):
-        col_f1, col_f2 = st.columns(2)
-        with col_f1:
-            new_title = st.text_input("Property Title *", placeholder="e.g. Hilltop Cloud Chalet & Private Deck")
-            new_location = st.text_input("City / Region *", placeholder="e.g. Manali, Himachal Pradesh")
-            new_price = st.number_input("Price per Night (INR) *", min_value=500, max_value=100000, value=4500, step=500)
-            new_category = st.selectbox("Category *", [c for c in categories if c != "All"])
-            new_guests = st.number_input("Max Guests", min_value=1, max_value=20, value=4)
-        with col_f2:
-            new_country = st.text_input("Country *", placeholder="e.g. India")
-            new_img = st.text_input("Image URL *", value="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&q=80")
-            new_lat = st.number_input("Latitude", value=32.2530, format="%.4f")
-            new_lng = st.number_input("Longitude", value=77.1750, format="%.4f")
-            new_amenities = st.text_input("Amenities (comma separated)", value="High-speed Wifi, Mountain View, Indoor Fireplace, Free Parking")
-
-        new_desc = st.text_area("Description *", placeholder="Describe your stay, views, and special amenities...")
-
-        submitted = st.form_submit_button("Publish Listing to StayFinder", type="primary")
-        if submitted:
-            if not new_title or not new_location or not new_country or not new_desc:
-                st.error("Please fill in all required fields marked with *.")
-            else:
-                new_listing = {
-                    "title": new_title,
-                    "description": new_desc,
-                    "location": new_location,
-                    "country": new_country,
-                    "price": new_price,
-                    "category": new_category,
-                    "image": {"url": new_img},
-                    "rating": 5.0,
-                    "guests": new_guests,
-                    "amenities": [a.strip() for a in new_amenities.split(",") if a.strip()],
-                    "geometry": {"lat": new_lat, "lng": new_lng}
-                }
-                st.session_state.listings_data.insert(0, new_listing)
-                st.success(f"🎉 **{new_title}** successfully published to StayFinder!")
-                st.rerun()
+            st.markdown("---")

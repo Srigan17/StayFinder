@@ -4,6 +4,8 @@ const initData = require("./data.js");
 const Listing = require("../models/listing.js");
 const User = require("../models/user.js");
 const Review = require("../models/review.js");
+const fs = require("fs");
+const path = require("path");
 
 const defaultDbUrl = "mongodb://127.0.0.1:27017/wanderlust";
 const dbUrl = process.env.ATLAS_DB_URL || defaultDbUrl;
@@ -19,14 +21,6 @@ async function main() {
     }
 }
 
-const sampleReviewComments = [
-    { rating: 5, comment: "Absolutely breathtaking! The views were even better than the photos. Spotless and well maintained." },
-    { rating: 5, comment: "One of the most memorable stays of our lives. The hosts were incredibly welcoming and helpful." },
-    { rating: 4, comment: "Fantastic location and great amenities. Super comfortable bed and very peaceful atmosphere." },
-    { rating: 5, comment: "A hidden gem. Everything from check-in to check-out was seamless. Highly recommended!" },
-    { rating: 5, comment: "Stunning architecture and immaculate cleanliness. We cannot wait to visit again next year!" }
-];
-
 const initDB = async() => {
     try {
         await Listing.deleteMany({});
@@ -40,57 +34,55 @@ const initDB = async() => {
             console.log("Created demo host user: stayfinder_host");
         }
 
-        // 2. Ensure sample reviewer users exist
-        const reviewerNames = ["alex_travels", "priya_sharma", "marcus_k", "sophie_wanderer", "arjun_mehta"];
-        const reviewers = [];
-        for (let name of reviewerNames) {
-            let reviewer = await User.findOne({ username: name });
-            if (!reviewer) {
-                reviewer = new User({ email: `${name}@example.com`, username: name });
-                reviewer = await User.register(reviewer, "Password123!");
-            }
-            reviewers.push(reviewer);
-        }
-
-        console.log(`Prepared ${reviewers.length} reviewer accounts.`);
-
-        // 3. Prepare listings with valid owner and real coordinates
+        // 2. Prepare listings and save reviews
         const preparedListings = [];
 
         for (let obj of initData.data) {
             const listingData = { ...obj };
             listingData.owner = hostUser._id;
 
-            // Preserve real coordinates if provided, else assign fallback
+            // Preserve real coordinates
             if (!listingData.geometry || !listingData.geometry.lat) {
                 listingData.geometry = {
-                    lat: 28.6139,
-                    lng: 77.2090
+                    lat: 15.5997,
+                    lng: 73.7431
                 };
             }
 
-            // Create 3-5 real reviews for each listing
-            const listingReviews = [];
-            for (let i = 0; i < sampleReviewComments.length; i++) {
-                const sampleRev = sampleReviewComments[i];
-                const reviewer = reviewers[i % reviewers.length];
+            const listingReviewIds = [];
 
-                const revDoc = new Review({
-                    rating: sampleRev.rating,
-                    comment: sampleRev.comment,
-                    owner: reviewer._id,
-                    createdAt: new Date(Date.now() - (i + 1) * 86400000 * 3)
-                });
-                await revDoc.save();
-                listingReviews.push(revDoc._id);
+            if (obj.reviews && Array.isArray(obj.reviews)) {
+                for (let r of obj.reviews) {
+                    const cleanUsername = r.author.toLowerCase().replace(/\s+/g, "_");
+                    let reviewer = await User.findOne({ username: cleanUsername });
+                    if (!reviewer) {
+                        reviewer = new User({ email: `${cleanUsername}@example.com`, username: cleanUsername });
+                        reviewer = await User.register(reviewer, "Password123!");
+                    }
+
+                    const revDoc = new Review({
+                        rating: r.rating,
+                        comment: r.comment,
+                        owner: reviewer._id,
+                        createdAt: r.date ? new Date(r.date) : new Date()
+                    });
+                    await revDoc.save();
+                    listingReviewIds.push(revDoc._id);
+                }
             }
 
-            listingData.reviews = listingReviews;
+            listingData.reviews = listingReviewIds;
             preparedListings.push(listingData);
         }
 
         await Listing.insertMany(preparedListings);
-        console.log(`Successfully initialized DB with ${preparedListings.length} rich location listings and guest reviews!`);
+        console.log(`Successfully initialized DB with ${preparedListings.length} famous Indian stays and real guest reviews!`);
+
+        // Also export to data/listings.json for Streamlit
+        const jsonPath = path.join(__dirname, "..", "data", "listings.json");
+        fs.mkdirSync(path.dirname(jsonPath), { recursive: true });
+        fs.writeFileSync(jsonPath, JSON.stringify(initData.data, null, 2));
+        console.log("Saved updated 6 Indian listings to data/listings.json");
 
     } catch (err) {
         console.error("Error during DB initialization:", err);
