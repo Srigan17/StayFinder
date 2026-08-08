@@ -1,14 +1,16 @@
 <% layout("layouts/boilerplate") %>
 
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
         .hs-hero {
-            min-height: calc(100vh - 56px);
+            min-height: calc(85vh - 56px);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 5rem 1.5rem 4rem;
+            padding: 4.5rem 1.5rem 3.5rem;
             background: #faf7f2;
             position: relative;
             overflow: hidden;
@@ -45,13 +47,13 @@
             background: #f3ede3;
             border: 1px solid #e8ddd0;
             border-radius: 100px;
-            padding: 0.3rem 1rem;
-            font-size: 0.7rem;
-            font-weight: 500;
+            padding: 0.35rem 1.1rem;
+            font-size: 0.72rem;
+            font-weight: 600;
             color: #7a5c44;
             letter-spacing: 0.1em;
             text-transform: uppercase;
-            margin-bottom: 1.6rem;
+            margin-bottom: 1.4rem;
         }
         
         .hs-badge::before {
@@ -63,12 +65,12 @@
         }
         
         .hs-title {
-            font-family: 'Georgia', serif;
-            font-size: clamp(2.8rem, 7vw, 5rem);
-            font-weight: 300;
-            line-height: 1.08;
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.6rem, 6vw, 4.8rem);
+            font-weight: 500;
+            line-height: 1.1;
             color: #3d2b1f;
-            max-width: 680px;
+            max-width: 760px;
         }
         
         .hs-title em {
@@ -77,65 +79,85 @@
         }
         
         .hs-sub {
-            font-size: 1rem;
-            line-height: 1.75;
+            font-size: 1.05rem;
+            line-height: 1.7;
             color: #7a6a5a;
-            max-width: 460px;
-            margin: 1.2rem auto 0;
+            max-width: 520px;
+            margin: 1.2rem auto 2rem;
         }
-        
-        .hs-btn-primary {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.45rem;
-            background: #3d2b1f;
-            color: #fff;
-            font-size: 0.9rem;
-            font-weight: 500;
-            padding: 0.8rem 2rem;
-            border-radius: 8px;
-            text-decoration: none;
-            box-shadow: 0 4px 18px rgba(61, 43, 31, 0.22);
-            transition: background 0.2s, transform 0.15s;
-        }
-        
-        .hs-btn-primary:hover {
-            background: #7a5c44;
-            color: #fff;
-            transform: translateY(-2px);
-        }
-        
-        .hs-btn-outline {
-            display: inline-flex;
-            align-items: center;
-            color: #3d2b1f;
-            font-size: 0.9rem;
-            font-weight: 500;
-            padding: 0.8rem 2rem;
-            border-radius: 8px;
+
+        /* ── Hero Search Box ── */
+        .hero-search-card {
+            background: #ffffff;
             border: 1.5px solid #e8ddd0;
-            text-decoration: none;
-            background: transparent;
-            transition: border-color 0.2s, background 0.2s;
+            border-radius: 60px;
+            box-shadow: 0 8px 30px rgba(61, 43, 31, 0.10);
+            padding: 8px 10px;
+            width: 100%;
+            max-width: 680px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: box-shadow 0.2s, border-color 0.2s;
+            position: relative;
+            z-index: 2;
         }
-        
-        .hs-btn-outline:hover {
-            border-color: #c8b8a2;
-            background: #f3ede3;
+
+        .hero-search-card:focus-within {
+            box-shadow: 0 12px 38px rgba(61, 43, 31, 0.15);
+            border-color: #c9973a;
+        }
+
+        .hero-search-input-wrap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            padding-left: 18px;
+        }
+
+        .hero-search-input-wrap input {
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 0.95rem;
+            width: 100%;
             color: #3d2b1f;
+        }
+
+        .hero-search-btn {
+            background: #3d2b1f;
+            color: #faf7f2;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-size: 0.92rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hero-search-btn:hover {
+            background: #c9973a;
+            transform: translateY(-1px);
         }
         
         .hs-stat-val {
-            font-family: 'Georgia', serif;
-            font-size: 2rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.9rem;
             font-weight: 600;
             color: #3d2b1f;
         }
         
         .hs-stat-lbl {
-            font-size: 0.7rem;
+            font-size: 0.72rem;
             color: #7a6a5a;
             letter-spacing: 0.04em;
+            text-transform: uppercase;
         }
         
         .hs-divider {
@@ -143,8 +165,109 @@
             height: 36px;
             background: #e8ddd0;
         }
-        /* Feature strip */
+
+        /* ── Destination Showcase Section ── */
+        .dest-showcase-section {
+            padding: 4.5rem 1rem 3rem;
+            background: #fbf9f5;
+        }
+
+        .dest-card-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .dest-circle-card {
+            background: #ffffff;
+            border: 1px solid #e8ddd0;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 16px rgba(61, 43, 31, 0.04);
+            height: 100%;
+            text-align: center;
+            padding-bottom: 1rem;
+        }
+
+        .dest-circle-card:hover {
+            transform: translateY(-5px);
+            border-color: #c9973a;
+            box-shadow: 0 10px 24px rgba(61, 43, 31, 0.10);
+        }
+
+        .dest-circle-img {
+            width: 100%;
+            height: 130px;
+            object-fit: cover;
+            margin-bottom: 0.85rem;
+        }
+
+        .dest-circle-name {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: #3d2b1f;
+            margin-bottom: 2px;
+        }
+
+        .dest-circle-sub {
+            font-size: 0.78rem;
+            color: #8c7665;
+        }
+
+        /* ── Handpicked Stays Grid ── */
+        .featured-section {
+            padding: 3.5rem 1rem 4.5rem;
+            background: #f5f0e8;
+        }
+
+        .section-header-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: #3d2b1f;
+            margin-bottom: 0.35rem;
+        }
+
+        .section-header-sub {
+            color: #7a6a5a;
+            font-size: 0.95rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .mini-listing-card {
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #e8ddd0;
+            overflow: hidden;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .mini-listing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 24px rgba(61, 43, 31, 0.10);
+            border-color: #c9973a;
+        }
+
+        .mini-card-img {
+            height: 190px;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .mini-card-body {
+            padding: 1.1rem;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
         
+        /* Feature strip */
         .hs-features {
             background: #fff;
             border-top: 1px solid #e8ddd0;
@@ -153,7 +276,7 @@
         
         .hs-feat {
             flex: 1;
-            padding: 1.8rem 2rem;
+            padding: 2.2rem 2rem;
             border-right: 1px solid #e8ddd0;
             transition: background 0.2s;
         }
@@ -163,28 +286,28 @@
         }
         
         .hs-feat:hover {
-            background: #f3ede3;
+            background: #faf7f2;
         }
         
         .hs-feat-title {
-            font-family: 'Georgia', serif;
-            font-size: 1.05rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
             font-weight: 600;
             color: #3d2b1f;
-            margin: 0.5rem 0 0.3rem;
+            margin: 0.75rem 0 0.4rem;
         }
         
         .hs-feat-desc {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             line-height: 1.6;
             color: #7a6a5a;
             margin: 0;
         }
+
         /* CTA strip */
-        
         .hs-cta {
             background: #3d2b1f;
-            padding: 4rem 3rem;
+            padding: 4.5rem 3rem;
             position: relative;
             overflow: hidden;
         }
@@ -202,26 +325,26 @@
         }
         
         .hs-cta-title {
-            font-family: 'Georgia', serif;
-            font-size: clamp(1.6rem, 3vw, 2.4rem);
-            font-weight: 300;
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+            font-weight: 500;
             color: #fff;
             line-height: 1.2;
         }
         
         .hs-cta-sub {
-            font-size: 0.88rem;
-            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.92rem;
+            color: rgba(255, 255, 255, 0.6);
             margin-top: 0.4rem;
         }
         
         .hs-btn-gold {
-            padding: 0.8rem 1.8rem;
+            padding: 0.85rem 2rem;
             border-radius: 8px;
             background: #c9973a;
             color: #3d2b1f;
-            font-size: 0.88rem;
-            font-weight: 500;
+            font-size: 0.92rem;
+            font-weight: 600;
             text-decoration: none;
             transition: background 0.2s, transform 0.15s;
         }
@@ -232,11 +355,11 @@
         }
         
         .hs-btn-ghost-w {
-            padding: 0.8rem 1.8rem;
+            padding: 0.85rem 2rem;
             border-radius: 8px;
             border: 1.5px solid rgba(255, 255, 255, 0.25);
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.88rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.92rem;
             font-weight: 500;
             text-decoration: none;
             transition: border-color 0.2s, background 0.2s;
@@ -249,76 +372,212 @@
         }
     </style>
 
-    <!-- HERO -->
+    <!-- ── HERO SECTION ── -->
     <section class="hs-hero">
-        <div class="hs-badge">Verified Property Listings</div>
+        <div class="hs-badge">Verified Stays &amp; Destinations</div>
 
         <h1 class="hs-title">
-            Find your next<br/><em>perfect</em> stay
+            Find your next<br/><em>extraordinary</em> stay
         </h1>
 
         <p class="hs-sub">
-            Curated homes, apartments, and villas listed by verified hosts — trustworthy, transparent, and simple.
+            Discover handpicked villas, alpine chalets, and historic havelis across the most enchanting destinations worldwide.
         </p>
 
-        <div class="d-flex gap-3 flex-wrap justify-content-center mt-4">
-            <a class="hs-btn-primary" href="/signup">
-      Get started free
-      <i class="fa-solid fa-arrow-right fa-sm"></i>
-    </a>
-            <a class="hs-btn-outline" href="/listings">Browse listings</a>
-        </div>
+        <!-- Direct Search Box in Hero -->
+        <form action="/listings" method="GET" class="hero-search-card">
+            <div class="hero-search-input-wrap">
+                <i class="fa-solid fa-location-dot" style="color: #c9973a; font-size: 1.15rem;"></i>
+                <input type="text" name="q" placeholder="Where do you want to go? e.g. Goa, Paris, Manali, Bali, Tokyo...">
+            </div>
+            <button type="submit" class="hero-search-btn">
+                <i class="fa-solid fa-magnifying-glass"></i> Explore
+            </button>
+        </form>
 
         <div class="d-flex align-items-center gap-4 mt-5" style="position:relative;z-index:1;">
             <div class="hs-stat text-center">
-                <div class="hs-stat-val">2,400+</div>
-                <div class="hs-stat-lbl">Active listings</div>
+                <div class="hs-stat-val">35+</div>
+                <div class="hs-stat-lbl">Global locations</div>
             </div>
             <div class="hs-divider"></div>
             <div class="hs-stat text-center">
-                <div class="hs-stat-val">98%</div>
-                <div class="hs-stat-lbl">Happy stays</div>
+                <div class="hs-stat-val">4.9 ★</div>
+                <div class="hs-stat-lbl">Average rating</div>
             </div>
             <div class="hs-divider"></div>
             <div class="hs-stat text-center">
-                <div class="hs-stat-val">120+</div>
-                <div class="hs-stat-lbl">Cities covered</div>
+                <div class="hs-stat-val">100%</div>
+                <div class="hs-stat-lbl">Verified hosts</div>
             </div>
         </div>
     </section>
 
-    <!-- FEATURE STRIP -->
+    <!-- ── POPULAR DESTINATIONS SHOWCASE ── -->
+    <section class="dest-showcase-section">
+        <div class="container">
+            <div class="text-center mb-4">
+                <h2 class="section-header-title">Popular Destinations</h2>
+                <p class="section-header-sub">Iconic cities and breathtaking regions loved by travelers</p>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-6 col-md-3">
+                    <a href="/listings?destination=Goa" class="dest-card-link">
+                        <div class="dest-circle-card">
+                            <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=500&q=70" class="dest-circle-img" alt="Goa">
+                            <div class="dest-circle-name">Goa</div>
+                            <div class="dest-circle-sub">Sun, Sea &amp; Coastal Villas</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a href="/listings?destination=Manali" class="dest-card-link">
+                        <div class="dest-circle-card">
+                            <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=500&q=70" class="dest-circle-img" alt="Manali">
+                            <div class="dest-circle-name">Manali</div>
+                            <div class="dest-circle-sub">Alpine Chalets &amp; Snow Peaks</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a href="/listings?destination=Paris" class="dest-card-link">
+                        <div class="dest-circle-card">
+                            <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=500&q=70" class="dest-circle-img" alt="Paris">
+                            <div class="dest-circle-name">Paris</div>
+                            <div class="dest-circle-sub">Eiffel Views &amp; City Lofts</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a href="/listings?destination=Santorini" class="dest-card-link">
+                        <div class="dest-circle-card">
+                            <img src="https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=500&q=70" class="dest-circle-img" alt="Santorini">
+                            <div class="dest-circle-name">Santorini</div>
+                            <div class="dest-circle-sub">Cliffside Caldera &amp; Sunsets</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a href="/listings?destination=Jaipur" class="dest-card-link">
+                        <div class="dest-circle-card">
+                            <img src="https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=500&q=70" class="dest-circle-img" alt="Jaipur">
+                            <div class="dest-circle-name">Jaipur</div>
+                            <div class="dest-circle-sub">Royal Heritage &amp; Courtyards</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a href="/listings?destination=Swiss+Alps" class="dest-card-link">
+                        <div class="dest-circle-card">
+                            <img src="https://images.unsplash.com/photo-1502784444187-359ac186c5bb?auto=format&fit=crop&w=500&q=70" class="dest-circle-img" alt="Swiss Alps">
+                            <div class="dest-circle-name">Swiss Alps</div>
+                            <div class="dest-circle-sub">Matterhorn Ski Lodges</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a href="/listings?destination=Bali" class="dest-card-link">
+                        <div class="dest-circle-card">
+                            <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=500&q=70" class="dest-circle-img" alt="Bali">
+                            <div class="dest-circle-name">Bali</div>
+                            <div class="dest-circle-sub">Bamboo Treehouses &amp; Jungle</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a href="/listings?destination=Kyoto" class="dest-card-link">
+                        <div class="dest-circle-card">
+                            <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=500&q=70" class="dest-circle-img" alt="Kyoto">
+                            <div class="dest-circle-name">Kyoto</div>
+                            <div class="dest-circle-sub">Zen Machiyas &amp; Gardens</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── FEATURED STAYS SHOWCASE ── -->
+    <% if (typeof featuredListings !== 'undefined' && featuredListings.length > 0) { %>
+        <section class="featured-section">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-2">
+                    <div>
+                        <h2 class="section-header-title">Trending Stays</h2>
+                        <p class="section-header-sub mb-0">Handpicked properties rated highest by our community</p>
+                    </div>
+                    <a href="/listings" class="btn btn-outline-dark" style="border-radius:30px; font-size:0.85rem; padding:0.5rem 1.4rem;">
+                        View All <%= featuredListings.length %>+ Stays <i class="fa-solid fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+
+                <div class="row g-4">
+                    <% for (let stay of featuredListings) { %>
+                        <div class="col-lg-4 col-md-6">
+                            <a href="/listings/<%= stay._id %>" class="mini-listing-card">
+                                <img src="<%= stay.image.url %>" class="mini-card-img" alt="<%= stay.title %>" loading="lazy">
+                                <div class="mini-card-body">
+                                    <div class="d-flex justify-content-between align-items-start gap-2 mb-1">
+                                        <h5 style="font-size:1rem; font-weight:600; color:#3d2b1f; margin:0; line-height:1.3;">
+                                            <%= stay.title %>
+                                        </h5>
+                                        <div style="font-size:0.85rem; font-weight:600; color:#3d2b1f; white-space:nowrap;">
+                                            <i class="fa-solid fa-star text-warning"></i> <%= stay.rating || 4.9 %>
+                                        </div>
+                                    </div>
+                                    <div style="font-size:0.82rem; color:#7a6a5a; margin-bottom:0.75rem;">
+                                        <i class="fa-solid fa-location-dot text-danger"></i> <%= stay.location %>, <%= stay.country %>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mt-auto pt-2 border-top">
+                                        <div style="font-size:1.05rem; font-weight:700; color:#3d2b1f;">
+                                            ₹<%= Number(stay.price).toLocaleString("en-IN") %><span style="font-size:0.75rem; font-weight:400; color:#888;"> / night</span>
+                                        </div>
+                                        <span style="font-size:0.8rem; font-weight:600; color:#c9973a;">
+                                            Book Stay →
+                                        </span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </section>
+    <% } %>
+
+    <!-- ── FEATURE STRIP ── -->
     <div class="hs-features d-flex flex-wrap">
         <div class="hs-feat">
-            <div style="font-size:1.4rem;">🔍</div>
+            <div style="font-size:1.6rem; color:#c9973a;"><i class="fa-solid fa-shield-check"></i></div>
             <div class="hs-feat-title">Verified Listings</div>
-            <p class="hs-feat-desc">Every property is checked before publishing — accurate photos, prices, and details guaranteed.</p>
+            <p class="hs-feat-desc">Every property is verified with accurate high-res photos, honest pricing, and genuine guest reviews.</p>
         </div>
         <div class="hs-feat">
-            <div style="font-size:1.4rem;">⚡</div>
-            <div class="hs-feat-title">Instant Booking</div>
-            <p class="hs-feat-desc">Book directly and get confirmation in minutes. No back-and-forth, no waiting.</p>
+            <div style="font-size:1.6rem; color:#c9973a;"><i class="fa-solid fa-bolt"></i></div>
+            <div class="hs-feat-title">Instant Reservations</div>
+            <p class="hs-feat-desc">Select check-in &amp; check-out dates, choose guest capacity, and get instant booking confirmation codes.</p>
         </div>
         <div class="hs-feat">
-            <div style="font-size:1.4rem;">🔒</div>
-            <div class="hs-feat-title">Secure & Trusted</div>
-            <p class="hs-feat-desc">Hosts are ID-verified and rated. All transactions are fully encrypted end-to-end.</p>
+            <div style="font-size:1.6rem; color:#c9973a;"><i class="fa-solid fa-map-location-dot"></i></div>
+            <div class="hs-feat-title">Interactive Map Browsing</div>
+            <p class="hs-feat-desc">Explore stays with real geographic coordinates on interactive OpenStreetMap maps with live price tags.</p>
         </div>
         <div class="hs-feat">
-            <div style="font-size:1.4rem;">💬</div>
-            <div class="hs-feat-title">24/7 Support</div>
-            <p class="hs-feat-desc">Our team is always on hand for queries, issues, or anything in between.</p>
+            <div style="font-size:1.6rem; color:#c9973a;"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+            <div class="hs-feat-title">AI Review Insights</div>
+            <p class="hs-feat-desc">Intelligent AI review summaries spotlight highlights, guest feedback, and sentiment score at a glance.</p>
         </div>
     </div>
 
-    <!-- CTA STRIP -->
+    <!-- ── CTA STRIP ── -->
     <div class="hs-cta d-flex align-items-center justify-content-between flex-wrap gap-4">
         <div style="position:relative;z-index:1;">
-            <div class="hs-cta-title">Ready to find<br/>your StayFinder?</div>
-            <div class="hs-cta-sub">Join thousands of renters and hosts today.</div>
+            <div class="hs-cta-title">Ready to find your<br/>perfect stay?</div>
+            <div class="hs-cta-sub">Join thousands of travelers exploring dream stays across India and the world.</div>
         </div>
         <div class="d-flex gap-3 flex-wrap" style="position:relative;z-index:1;">
-            <a class="hs-btn-gold" href="/signup">Create free account</a>
-            <a class="hs-btn-ghost-w" href="/login">Log in</a>
+            <a class="hs-btn-gold" href="/listings">Explore All Stays</a>
+            <a class="hs-btn-ghost-w" href="/signup">Create Free Account</a>
         </div>
     </div>
