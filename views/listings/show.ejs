@@ -1,320 +1,872 @@
 <% layout("layouts/boilerplate") %>
 
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-    <style>
-        #map {
-            height: 400px;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-        }
-    </style>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+    body {
+        background: #fbf9f5;
+        font-family: 'DM Sans', sans-serif;
+    }
 
-    <div class="show-page">
-        <div class="show-card">
+    .show-page-container {
+        max-width: 1140px;
+        margin: 0 auto;
+        padding: 2rem 1rem 4rem;
+    }
 
-            <!-- Image -->
-            <div class="show-img-wrapper">
-                <img src="<%= doc.image.url %>" alt="<%= doc.title %>" class="show-img" />
+    /* ── Header Area ── */
+    .stay-header {
+        margin-bottom: 1.25rem;
+    }
 
-                <div class="show-price-badge">
-                    ₹
-                    <%= doc.price.toLocaleString("en-IN") %>
-                        <span>/ night</span>
-                </div>
+    .stay-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.1rem;
+        font-weight: 600;
+        color: #3d2b1f;
+        margin-bottom: 0.4rem;
+        letter-spacing: -0.01em;
+    }
+
+    .stay-meta-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        font-size: 0.9rem;
+        color: #7a6a5a;
+    }
+
+    .stay-meta-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .stay-rating-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-weight: 600;
+        color: #3d2b1f;
+    }
+
+    .stay-actions-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .btn-action-pill {
+        background: #ffffff;
+        border: 1px solid #e8ddd0;
+        border-radius: 30px;
+        padding: 6px 14px;
+        font-size: 0.85rem;
+        color: #3d2b1f;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        transition: all 0.18s ease;
+    }
+
+    .btn-action-pill:hover {
+        background: #faf7f2;
+        border-color: #c9973a;
+        color: #3d2b1f;
+    }
+
+    /* ── Image Gallery ── */
+    .stay-hero-img-wrap {
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 8px 30px rgba(61, 43, 31, 0.08);
+        border: 1px solid #e8ddd0;
+        margin-bottom: 2rem;
+        max-height: 480px;
+    }
+
+    .stay-hero-img {
+        width: 100%;
+        height: 100%;
+        max-height: 480px;
+        object-fit: cover;
+        display: block;
+    }
+
+    /* ── Two Column Layout ── */
+    .content-column {
+        padding-right: 1.5rem;
+    }
+
+    .section-block {
+        padding: 1.75rem 0;
+        border-bottom: 1px solid #e8ddd0;
+    }
+
+    .section-heading {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.35rem;
+        font-weight: 600;
+        color: #3d2b1f;
+        margin-bottom: 1rem;
+    }
+
+    /* ── Host Profile Card ── */
+    .host-box {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .host-avatar {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: #3d2b1f;
+        color: #faf7f2;
+        border: 2px solid #c9973a;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        font-weight: 700;
+    }
+
+    .host-specs-strip {
+        display: flex;
+        gap: 18px;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+        font-size: 0.9rem;
+        color: #6e6155;
+    }
+
+    .spec-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    /* ── Amenities Grid ── */
+    .amenities-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 14px;
+        margin-top: 1rem;
+    }
+
+    .amenity-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        background: #ffffff;
+        border: 1px solid #e8ddd0;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        color: #3d2b1f;
+        font-weight: 500;
+    }
+
+    .amenity-card i {
+        color: #c9973a;
+        font-size: 1.1rem;
+        width: 20px;
+        text-align: center;
+    }
+
+    /* ── Reservation Sticky Card ── */
+    .reservation-card {
+        position: sticky;
+        top: 90px;
+        background: #ffffff;
+        border: 1px solid #e8ddd0;
+        border-radius: 20px;
+        padding: 1.75rem;
+        box-shadow: 0 10px 32px rgba(61, 43, 31, 0.08);
+    }
+
+    .res-price-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 1.25rem;
+    }
+
+    .res-rate {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #3d2b1f;
+    }
+
+    .res-rate span {
+        font-size: 0.9rem;
+        font-weight: 400;
+        color: #8c7665;
+    }
+
+    .booking-inputs-box {
+        border: 1px solid #dcd3c8;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 1.25rem;
+    }
+
+    .dates-row {
+        display: flex;
+        border-bottom: 1px solid #dcd3c8;
+    }
+
+    .date-input-field {
+        flex: 1;
+        padding: 8px 12px;
+    }
+
+    .date-input-field:first-child {
+        border-right: 1px solid #dcd3c8;
+    }
+
+    .date-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: #8c7665;
+        margin-bottom: 2px;
+        display: block;
+    }
+
+    .date-input {
+        border: none;
+        outline: none;
+        font-size: 0.88rem;
+        color: #3d2b1f;
+        width: 100%;
+        background: transparent;
+    }
+
+    .guests-field {
+        padding: 8px 12px;
+    }
+
+    .guests-select {
+        border: none;
+        outline: none;
+        font-size: 0.88rem;
+        color: #3d2b1f;
+        width: 100%;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    .btn-reserve-action {
+        width: 100%;
+        background: #3d2b1f;
+        color: #faf7f2;
+        border: none;
+        padding: 14px;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.15s;
+        box-shadow: 0 4px 14px rgba(61, 43, 31, 0.2);
+    }
+
+    .btn-reserve-action:hover {
+        background: #c9973a;
+        transform: translateY(-1px);
+    }
+
+    .price-breakdown {
+        margin-top: 1.25rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid #f0e8df;
+        font-size: 0.9rem;
+        color: #6e6155;
+    }
+
+    .breakdown-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+    }
+
+    .total-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #3d2b1f;
+        padding-top: 10px;
+        border-top: 1px solid #e8ddd0;
+        margin-top: 10px;
+    }
+
+    /* ── AI Summary & Reviews ── */
+    .ai-summary-box {
+        background: #fdfaf6;
+        border: 1.5px solid #ecdcc8;
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .sentiment-meter {
+        height: 10px;
+        border-radius: 10px;
+        background: #e8ddd0;
+        overflow: hidden;
+        margin-top: 8px;
+    }
+
+    .sentiment-meter-bar {
+        height: 100%;
+        background: #10b981;
+        border-radius: 10px;
+    }
+
+    .review-card-item {
+        background: #ffffff;
+        border: 1px solid #e8ddd0;
+        border-radius: 14px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+    }
+
+    #map {
+        height: 380px;
+        border-radius: 16px;
+        border: 1px solid #e8ddd0;
+        margin-top: 1rem;
+        box-shadow: 0 4px 18px rgba(61, 43, 31, 0.05);
+    }
+
+    /* ── Toast Notification ── */
+    #shareToast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: #3d2b1f;
+        color: #fff;
+        padding: 12px 24px;
+        border-radius: 8px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+        display: none;
+        z-index: 9999;
+        font-size: 0.9rem;
+    }
+</style>
+
+<div class="show-page-container">
+
+    <!-- ── Title & Meta Bar ── -->
+    <div class="stay-header">
+        <h1 class="stay-title"><%= doc.title %></h1>
+        <div class="stay-meta-bar">
+            <div class="stay-meta-left">
+                <span class="stay-rating-badge">
+                    <i class="fa-solid fa-star text-warning"></i>
+                    <%= doc.rating || 4.9 %> · 
+                    <span style="font-weight: 400; text-decoration: underline; cursor: pointer;" onclick="document.getElementById('reviewsSection').scrollIntoView({behavior:'smooth'})">
+                        <%= (doc.reviews && doc.reviews.length) || 0 %> reviews
+                    </span>
+                </span>
+                <span>·</span>
+                <span>
+                    <i class="fa-solid fa-location-dot text-danger me-1"></i>
+                    <%= doc.location %>, <%= doc.country %>
+                </span>
+                <span class="badge" style="background:#faf7f2; color:#3d2b1f; border:1px solid #e8ddd0;">
+                    <%= doc.category %>
+                </span>
             </div>
 
-            <!-- Body -->
-            <div class="show-body">
+            <div class="stay-actions-bar">
+                <button type="button" class="btn-action-pill" id="shareBtn">
+                    <i class="fa-solid fa-arrow-up-from-bracket"></i> Share
+                </button>
+                <button type="button" class="btn-action-pill" id="saveWishlistBtn">
+                    <i class="fa-regular fa-heart" id="saveWishlistIcon"></i> Save
+                </button>
+            </div>
+        </div>
+    </div>
 
-                <div class="show-top">
+    <!-- ── Hero Image ── -->
+    <div class="stay-hero-img-wrap">
+        <img src="<%= doc.image.url %>" class="stay-hero-img" alt="<%= doc.title %>">
+    </div>
+
+    <!-- ── 2-Column Content Section ── -->
+    <div class="row">
+
+        <!-- ── Left Column: Details ── -->
+        <div class="col-lg-7 content-column">
+
+            <!-- Host info & Capacity specs -->
+            <div class="section-block pt-0">
+                <div class="host-box">
+                    <div class="host-avatar">
+                        <%= (doc.owner && doc.owner.username) ? doc.owner.username.charAt(0).toUpperCase() : 'H' %>
+                    </div>
                     <div>
-                        <h3 class="show-title">
-                            <%= doc.title %>
-                        </h3>
-
-                        <p class="show-location">
-                            <i class="fa-solid fa-location-dot show-pin"></i>
-                            <%= doc.location %>,
-                                <%= doc.country %>
-                        </p>
-
-                        <div class="host-info">
-                            <div>
-                                <div class="host-label">Hosted by</div>
-                                <div class="host-name">
-                                    <%= doc.owner.username %>
-                                </div>
-                            </div>
+                        <h4 style="font-family:'Playfair Display',serif; font-size:1.25rem; margin-bottom:2px; color:#3d2b1f;">
+                            Hosted by <%= (doc.owner && doc.owner.username) ? doc.owner.username : 'Haven Host' %>
+                        </h4>
+                        <div style="font-size:0.85rem; color:#8c7665;">
+                            <i class="fa-solid fa-award text-warning me-1"></i> Verified Superhost · 2+ years hosting
                         </div>
                     </div>
                 </div>
 
-                <div class="section-divider">About this place</div>
+                <div class="host-specs-strip">
+                    <div class="spec-item"><i class="fa-solid fa-users text-muted"></i> Up to <%= doc.guests || 4 %> guests</div>
+                    <div class="spec-item">·</div>
+                    <div class="spec-item"><i class="fa-solid fa-door-open text-muted"></i> <%= doc.bedrooms || 2 %> bedrooms</div>
+                    <div class="spec-item">·</div>
+                    <div class="spec-item"><i class="fa-solid fa-bed text-muted"></i> <%= doc.beds || 2 %> beds</div>
+                    <div class="spec-item">·</div>
+                    <div class="spec-item"><i class="fa-solid fa-bath text-muted"></i> <%= doc.baths || 2 %> private baths</div>
+                </div>
+            </div>
 
-                <p class="show-description">
+            <!-- Description -->
+            <div class="section-block">
+                <h3 class="section-heading">About this space</h3>
+                <p style="color:#5c4738; line-height:1.75; font-size:0.95rem; margin:0;">
                     <%= doc.description %>
                 </p>
+            </div>
 
-                <div class="section-divider">Actions</div>
+            <!-- Amenities -->
+            <div class="section-block">
+                <h3 class="section-heading">What this place offers</h3>
+                <div class="amenities-grid">
+                    <% const defaultAmenities = (doc.amenities && doc.amenities.length > 0) ? doc.amenities : ["High-speed Wifi", "Air Conditioning", "Free Parking", "Kitchen", "Dedicated Workspace", "Scenic View"]; %>
+                    <% for (let amenity of defaultAmenities) { %>
+                        <div class="amenity-card">
+                            <% if (amenity.toLowerCase().includes("wifi")) { %>
+                                <i class="fa-solid fa-wifi"></i>
+                            <% } else if (amenity.toLowerCase().includes("pool")) { %>
+                                <i class="fa-solid fa-water-ladder"></i>
+                            <% } else if (amenity.toLowerCase().includes("parking")) { %>
+                                <i class="fa-solid fa-square-parking"></i>
+                            <% } else if (amenity.toLowerCase().includes("air") || amenity.toLowerCase().includes("heater")) { %>
+                                <i class="fa-solid fa-temperature-half"></i>
+                            <% } else if (amenity.toLowerCase().includes("fire")) { %>
+                                <i class="fa-solid fa-fire"></i>
+                            <% } else if (amenity.toLowerCase().includes("beach") || amenity.toLowerCase().includes("sea")) { %>
+                                <i class="fa-solid fa-umbrella-beach"></i>
+                            <% } else if (amenity.toLowerCase().includes("mountain")) { %>
+                                <i class="fa-solid fa-mountain"></i>
+                            <% } else if (amenity.toLowerCase().includes("kitchen")) { %>
+                                <i class="fa-solid fa-utensils"></i>
+                            <% } else { %>
+                                <i class="fa-solid fa-check"></i>
+                            <% } %>
+                            <span><%= amenity %></span>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
 
-                <div class="d-flex align-items-center gap-3 flex-wrap">
+            <!-- House Rules -->
+            <div class="section-block">
+                <h3 class="section-heading">House rules & stay policies</h3>
+                <div class="row g-3" style="font-size:0.88rem; color:#5c4738;">
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <i class="fa-regular fa-clock" style="color:#c9973a;"></i> Check-in: 2:00 PM – 9:00 PM
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fa-regular fa-clock" style="color:#c9973a;"></i> Check-out: 11:00 AM
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <i class="fa-solid fa-ban-smoking" style="color:#c9973a;"></i> No smoking inside
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fa-solid fa-shield-halved" style="color:#c9973a;"></i> Free cancellation up to 48 hours
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                    <% if (currUser && currUser._id.equals(doc.owner._id)) { %>
-
-                        <a href="/listings/<%= doc._id %>/edit" class="btn-submit d-flex align-items-center gap-2">
-                            <i class="fa-regular fa-pen-to-square"></i> Edit listing
+            <!-- Owner Action Buttons (Edit / Delete) -->
+            <% if (currUser && doc.owner && currUser._id.equals(doc.owner._id)) { %>
+                <div class="section-block">
+                    <h3 class="section-heading">Manage your property</h3>
+                    <div class="d-flex align-items-center gap-3 flex-wrap">
+                        <a href="/listings/<%= doc._id %>/edit" class="btn btn-dark" style="background:#3d2b1f; border-radius:8px; padding:0.55rem 1.25rem;">
+                            <i class="fa-regular fa-pen-to-square me-1"></i> Edit listing
                         </a>
-
-                        <form method="POST" action="/listings/<%= doc._id %>?_method=DELETE">
-                            <button type="submit" class="btn-delete d-flex align-items-center gap-2">
-              <i class="fa-regular fa-trash-can"></i>
-              Delete listing
-            </button>
+                        <form method="POST" action="/listings/<%= doc._id %>?_method=DELETE" onsubmit="return confirm('Are you sure you want to delete this listing permanently?');" style="margin:0;">
+                            <button type="submit" class="btn btn-outline-danger" style="border-radius:8px; padding:0.55rem 1.25rem;">
+                                <i class="fa-regular fa-trash-can me-1"></i> Delete listing
+                            </button>
                         </form>
+                    </div>
+                </div>
+            <% } %>
 
-                        <% } %>
+            <!-- AI Review Summary -->
+            <% if (doc.aiSummary && doc.aiSummary.overall) { %>
+                <div class="section-block">
+                    <div class="ai-summary-box">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h4 style="font-family:'Playfair Display',serif; font-size:1.2rem; color:#3d2b1f; margin:0;">
+                                ✨ AI Stay Summary
+                            </h4>
+                            <span class="badge bg-success" style="font-size:0.75rem;">
+                                <%= doc.aiSummary.sentiment %>% Positive Sentiment
+                            </span>
+                        </div>
+                        <p style="color:#5c4738; font-size:0.9rem; margin-bottom:1rem; line-height:1.6;">
+                            <%= doc.aiSummary.overall %>
+                        </p>
 
-                            <a href="/listings" class="btn-cancel">
-          ← Back to listings
-        </a>
+                        <div class="row g-2 mb-2">
+                            <div class="col-md-6">
+                                <strong style="font-size:0.8rem; color:#065f46; text-transform:uppercase;">Guests Loved:</strong>
+                                <ul style="font-size:0.85rem; color:#4a3b32; padding-left:18px; margin-top:4px;">
+                                    <% for (let pos of (doc.aiSummary.positives || [])) { %>
+                                        <li><%= pos %></li>
+                                    <% } %>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <strong style="font-size:0.8rem; color:#991b1b; text-transform:uppercase;">Good to Know:</strong>
+                                <ul style="font-size:0.85rem; color:#4a3b32; padding-left:18px; margin-top:4px;">
+                                    <% for (let neg of (doc.aiSummary.negatives || [])) { %>
+                                        <li><%= neg %></li>
+                                    <% } %>
+                                </ul>
+                            </div>
+                        </div>
 
+                        <div class="sentiment-meter">
+                            <div class="sentiment-meter-bar" style="width: <%= doc.aiSummary.sentiment %>%;"></div>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+
+            <!-- Reviews Section -->
+            <div class="section-block" id="reviewsSection">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="section-heading mb-0">
+                        <i class="fa-solid fa-star text-warning" style="font-size:1.1rem;"></i>
+                        <%= doc.rating || 4.9 %> · <%= (doc.reviews && doc.reviews.length) || 0 %> Reviews
+                    </h3>
                 </div>
 
-                <!-- REVIEW SECTION -->
-
+                <!-- Add Review Form -->
                 <% if (currUser) { %>
-
-                    <div class="review-section">
-
-                        <div class="section-divider">Leave a Review</div>
-
-                        <form action="/listings/<%= doc._id %>/reviews" method="POST" class="review-form needs-validation" novalidate>
-
-                            <div class="review-group">
-                                <label class="review-label">Rating</label>
-                                <div class="star-rating" id="starRating">
-                                    <% for (let i = 1; i <= 5; i++) { %>
-                                        <i class="fa-solid fa-star star-input" data-value="<%= i %>"></i>
-                                        <% } %>
-                                </div>
-                                <input type="hidden" id="rating" name="review[rating]" value="3" required />
-                                <div class="invalid-feedback" style="display: block; visibility: hidden;" id="starError">
-                                    Please select a rating.
-                                </div>
+                    <div class="p-3 mb-4 rounded" style="background:#ffffff; border:1px solid #e8ddd0;">
+                        <h5 style="font-size:1rem; color:#3d2b1f; margin-bottom:0.75rem; font-weight:600;">
+                            Leave a Review
+                        </h5>
+                        <form action="/listings/<%= doc._id %>/reviews" method="POST" class="needs-validation" novalidate>
+                            <div class="mb-3">
+                                <label class="form-label" style="font-size:0.82rem; color:#7a6a5a;">Rating</label>
+                                <select name="review[rating]" class="form-select form-select-sm" style="max-width:140px;" required>
+                                    <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
+                                    <option value="4">⭐⭐⭐⭐ (4/5)</option>
+                                    <option value="3">⭐⭐⭐ (3/5)</option>
+                                    <option value="2">⭐⭐ (2/5)</option>
+                                    <option value="1">⭐ (1/5)</option>
+                                </select>
                             </div>
-
-                            <div class="review-group">
-                                <label for="comment" class="review-label">
-                Comments
-              </label>
-
-                                <textarea id="comment" name="review[comment]" rows="5" class="review-textarea form-control" placeholder="Share your experience..." required></textarea>
-
-                                <div class="invalid-feedback">
-                                    Please enter a comment.
-                                </div>
+                            <div class="mb-3">
+                                <label class="form-label" style="font-size:0.82rem; color:#7a6a5a;">Comments</label>
+                                <textarea name="review[comment]" rows="3" class="form-control" placeholder="Share your experience at this property..." required></textarea>
+                                <div class="invalid-feedback">Please enter your feedback comment.</div>
                             </div>
-
-                            <button type="submit" class="btn-review">
-              Submit Review
-            </button>
-
+                            <button type="submit" class="btn btn-dark btn-sm" style="background:#3d2b1f; padding:0.4rem 1.2rem;">
+                                Submit Review
+                            </button>
                         </form>
+                    </div>
+                <% } else { %>
+                    <div class="p-3 mb-4 rounded" style="background:#faf7f2; border:1px dashed #c9973a; font-size:0.9rem;">
+                        <i class="fa-solid fa-lock text-muted me-1"></i> <a href="/login" style="color:#3d2b1f; font-weight:600;">Log in</a> to leave a review for this property.
+                    </div>
+                <% } %>
 
+                <!-- Review list -->
+                <% if (doc.reviews && doc.reviews.length > 0) { %>
+                    <% for (let review of doc.reviews) { %>
+                        <div class="review-card-item">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div style="width:34px; height:34px; border-radius:50%; background:#3d2b1f; color:#fff; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700;">
+                                        <%= (review.owner && review.owner.username) ? review.owner.username.charAt(0).toUpperCase() : 'G' %>
+                                    </div>
+                                    <div>
+                                        <strong style="color:#3d2b1f; font-size:0.9rem;"><%= (review.owner && review.owner.username) ? review.owner.username : 'Verified Guest' %></strong>
+                                        <div style="font-size:0.75rem; color:#8c7665;">
+                                            <%= new Date(review.createdAt || Date.now()).toLocaleDateString("en-IN", { month:'short', year:'numeric' }) %>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <% for (let i = 1; i <= 5; i++) { %>
+                                        <i class="fa-solid fa-star <%= i <= review.rating ? 'text-warning' : 'text-secondary opacity-25' %>" style="font-size:0.75rem;"></i>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <p style="font-size:0.88rem; color:#4a3b32; margin:0; line-height:1.5;">
+                                <%= review.comment %>
+                            </p>
+
+                            <% if (currUser && review.owner && currUser._id.equals(review.owner._id)) { %>
+                                <form method="POST" action="/listings/<%= doc._id %>/reviews/<%= review._id %>?_method=DELETE" class="mt-2 text-end">
+                                    <button type="submit" class="btn btn-link text-danger p-0" style="font-size:0.78rem; text-decoration:none;">
+                                        <i class="fa-regular fa-trash-can"></i> Delete
+                                    </button>
+                                </form>
+                            <% } %>
+                        </div>
+                    <% } %>
+                <% } else { %>
+                    <p class="text-muted" style="font-size:0.9rem;">No reviews yet. Be the first to share your experience!</p>
+                <% } %>
+            </div>
+
+            <!-- Location Map -->
+            <div class="section-block border-bottom-0">
+                <h3 class="section-heading">Where you will be</h3>
+                <p style="color:#7a6a5a; font-size:0.9rem; margin-bottom:0.5rem;">
+                    <i class="fa-solid fa-location-dot text-danger"></i> <%= doc.location %>, <%= doc.country %>
+                </p>
+                <div id="map"></div>
+            </div>
+
+        </div>
+
+        <!-- ── Right Column: Sticky Reservation Widget ── -->
+        <div class="col-lg-5">
+            <div class="reservation-card">
+
+                <div class="res-price-header">
+                    <div class="res-rate">
+                        ₹<%= Number(doc.price).toLocaleString("en-IN") %>
+                        <span>/ night</span>
+                    </div>
+                    <div style="font-size:0.88rem; font-weight:600; color:#3d2b1f;">
+                        <i class="fa-solid fa-star text-warning"></i> <%= doc.rating || 4.9 %>
+                    </div>
+                </div>
+
+                <!-- Booking Form -->
+                <form action="/listings/<%= doc._id %>/book" method="POST" id="bookingForm">
+                    <div class="booking-inputs-box">
+                        <div class="dates-row">
+                            <div class="date-input-field">
+                                <label class="date-label">Check-In</label>
+                                <input type="date" name="checkIn" id="checkInInput" class="date-input" required>
+                            </div>
+                            <div class="date-input-field">
+                                <label class="date-label">Check-Out</label>
+                                <input type="date" name="checkOut" id="checkOutInput" class="date-input" required>
+                            </div>
+                        </div>
+                        <div class="guests-field">
+                            <label class="date-label">Guests</label>
+                            <select name="guests" id="guestsInput" class="guests-select">
+                                <% for (let g = 1; g <= (doc.guests || 6); g++) { %>
+                                    <option value="<%= g %>"><%= g %> <%= g === 1 ? 'guest' : 'guests' %></option>
+                                <% } %>
+                            </select>
+                        </div>
                     </div>
 
+                    <% if (currUser) { %>
+                        <button type="submit" class="btn-reserve-action" id="reserveSubmitBtn">
+                            Reserve Stay
+                        </button>
+                    <% } else { %>
+                        <a href="/login" class="btn-reserve-action text-center d-block text-decoration-none">
+                            Log In to Reserve
+                        </a>
                     <% } %>
+                </form>
 
-                        <!-- Ai Summary -->
+                <div class="text-center mt-2" style="font-size:0.78rem; color:#8c7665;">
+                    You will not be charged until your booking is confirmed.
+                </div>
 
-                        <% if (doc.aiSummary && doc.aiSummary.overall) { %>
+                <!-- Live Price Calculation Breakdown -->
+                <div class="price-breakdown">
+                    <div class="breakdown-row">
+                        <span id="nightlyCalcLabel">₹<%= Number(doc.price).toLocaleString("en-IN") %> × 3 nights</span>
+                        <span id="basePriceTotal">₹<%= (doc.price * 3).toLocaleString("en-IN") %></span>
+                    </div>
+                    <div class="breakdown-row">
+                        <span>Cleaning fee</span>
+                        <span>₹600</span>
+                    </div>
+                    <div class="breakdown-row">
+                        <span>Service & GST Tax (18%)</span>
+                        <span id="taxesTotal">₹<%= Math.round(doc.price * 3 * 0.18).toLocaleString("en-IN") %></span>
+                    </div>
+                    <div class="total-row">
+                        <span>Total (INR)</span>
+                        <span id="grandTotal">₹<%= (doc.price * 3 + 600 + Math.round(doc.price * 3 * 0.18)).toLocaleString("en-IN") %></span>
+                    </div>
+                </div>
 
-                            <div class="ai-summary-card">
-
-                                <div class="section-divider">
-                                    🤖 AI Review Summary
-                                </div>
-
-                                <div class="ai-summary-overall">
-                                    <h5>Overall Experience</h5>
-                                    <p>
-                                        <%= doc.aiSummary.overall %>
-                                    </p>
-                                </div>
-
-                                <div class="row mt-4">
-
-                                    <div class="col-md-6">
-                                        <h5 class="text-success">
-                                            <i class="fa-solid fa-thumbs-up"></i> Guests Loved
-                                        </h5>
-
-                                        <ul class="summary-list">
-                                            <% doc.aiSummary.positives.forEach(item => { %>
-                                                <li>
-                                                    <%= item %>
-                                                </li>
-                                                <% }) %>
-                                        </ul>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <h5 class="text-danger">
-                                            <i class="fa-solid fa-thumbs-down"></i> Common Complaints
-                                        </h5>
-
-                                        <ul class="summary-list">
-                                            <% doc.aiSummary.negatives.forEach(item => { %>
-                                                <li>
-                                                    <%= item %>
-                                                </li>
-                                                <% }) %>
-                                        </ul>
-                                    </div>
-
-                                </div>
-
-                                <div class="sentiment-box mt-4">
-
-                                    <h5>
-                                        😊 Positive Sentiment
-                                    </h5>
-
-                                    <div class="progress" style="height:25px;">
-
-                                        <div class="progress-bar bg-success" role="progressbar" style="width:<%= doc.aiSummary.sentiment %>%">
-
-                                            <%= doc.aiSummary.sentiment %>%
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                            <% } %>
-
-                                <!-- ALL REVIEWS -->
-
-                                <% if (doc.reviews && doc.reviews.length > 0) { %>
-
-                                    <div class="reviews-container">
-
-                                        <div class="section-divider">Guest Reviews</div>
-
-                                        <div class="reviews-grid">
-
-                                            <% for (let review of doc.reviews) { %>
-
-                                                <div class="review-card">
-
-                                                    <div class="review-card-header">
-
-                                                        <div class="review-avatar">
-                                                            <%=review.owner.username[0].toUpperCase() %>
-                                                        </div>
-
-                                                        <div class="review-meta">
-                                                            <span class="review-author"><%=  review.owner.username  %></span>
-                                                            <span class="review-date">Verified Stay</span>
-                                                        </div>
-
-                                                        <span class="review-rating-badge">
-                      <%= review.rating %>/5
-                    </span>
-
-                                                    </div>
-
-                                                    <div class="review-stars">
-                                                        <% for (let i = 1; i <= 5; i++) { %>
-
-                                                            <i class="fa-solid fa-star <%= i <= review.rating ? 'star-filled' : 'star-empty' %>"></i>
-
-                                                            <% } %>
-                                                    </div>
-
-                                                    <p class="review-comment">
-                                                        <%= review.comment %>
-                                                    </p>
-
-                                                    <% if(currUser) { %>
-                                                        <form method="POST" action="/listings/<%= doc._id %>/reviews/<%= review._id %>?_method=DELETE" class="review-delete-form">
-                                                            <button type="submit" class="btn-review-delete">
-                      <i class="fa-regular fa-trash-can"></i>
-                      Delete review
-                    </button>
-                                                        </form>
-                                                        <% } %>
-
-                                                </div>
-
-                                                <% } %>
-
-                                        </div>
-
-                                    </div>
-
-                                    <% } else { %>
-
-                                        <div class="reviews-container">
-
-                                            <div class="section-divider">Guest Reviews</div>
-
-                                            <div class="no-reviews">
-                                                No reviews yet.
-                                            </div>
-
-                                        </div>
-
-                                        <% } %>
-
-
+                <div class="mt-3 p-2 rounded text-center" style="background:#faf7f2; border:1px solid #e8ddd0; font-size:0.78rem; color:#7a6a5a;">
+                    <i class="fa-solid fa-shield-halved text-success me-1"></i> StayFinder Price Guarantee · 100% Secure Checkout
+                </div>
 
             </div>
-            <!-- MAP SECTION START -->
-
-            <div class="section-divider">Location</div>
-
-            <div id="map"></div>
         </div>
+
     </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Share Toast -->
+<div id="shareToast">
+    <i class="fa-solid fa-check me-2 text-success"></i> Link copied to clipboard!
+</div>
 
-    <script>
-        const geometry = <%- JSON.stringify(doc.geometry) %>;
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-        const map = L.map("map").setView(
-            [geometry.lat, geometry.lng],
-            13
-        );
+<script>
+    // ──────────────────────────── 1. Date calculation & breakdown ────────────────────────────
+    const checkInInput = document.getElementById("checkInInput");
+    const checkOutInput = document.getElementById("checkOutInput");
+    const nightlyCalcLabel = document.getElementById("nightlyCalcLabel");
+    const basePriceTotal = document.getElementById("basePriceTotal");
+    const taxesTotal = document.getElementById("taxesTotal");
+    const grandTotal = document.getElementById("grandTotal");
+    const nightlyRate = <%= doc.price %>;
 
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
+    // Set default check-in to tomorrow and check-out to 4 days later
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const checkoutDefault = new Date(today);
+    checkoutDefault.setDate(checkoutDefault.getDate() + 4);
 
-        const redIcon = L.icon({
-            iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
-            shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+    const formatDate = (d) => d.toISOString().split("T")[0];
 
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            popupAnchor: [1, -34],
-            shadowSize: [41, 41]
+    checkInInput.min = formatDate(tomorrow);
+    checkInInput.value = formatDate(tomorrow);
+    checkOutInput.min = formatDate(tomorrow);
+    checkOutInput.value = formatDate(checkoutDefault);
+
+    function updateBreakdown() {
+        const start = new Date(checkInInput.value);
+        const end = new Date(checkOutInput.value);
+
+        if (end <= start) {
+            const nextDay = new Date(start);
+            nextDay.setDate(nextDay.getDate() + 1);
+            checkOutInput.value = formatDate(nextDay);
+        }
+
+        const validStart = new Date(checkInInput.value);
+        const validEnd = new Date(checkOutInput.value);
+        const diffTime = Math.abs(validEnd - validStart);
+        const nights = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+
+        const base = nightlyRate * nights;
+        const cleaning = 600;
+        const taxes = Math.round(base * 0.18);
+        const total = base + cleaning + taxes;
+
+        nightlyCalcLabel.textContent = `₹${nightlyRate.toLocaleString("en-IN")} × ${nights} ${nights === 1 ? 'night' : 'nights'}`;
+        basePriceTotal.textContent = `₹${base.toLocaleString("en-IN")}`;
+        taxesTotal.textContent = `₹${taxes.toLocaleString("en-IN")}`;
+        grandTotal.textContent = `₹${total.toLocaleString("en-IN")}`;
+    }
+
+    checkInInput.addEventListener("change", function() {
+        checkOutInput.min = checkInInput.value;
+        updateBreakdown();
+    });
+    checkOutInput.addEventListener("change", updateBreakdown);
+    updateBreakdown();
+
+    // ──────────────────────────── 2. Share button ────────────────────────────
+    const shareBtn = document.getElementById("shareBtn");
+    const shareToast = document.getElementById("shareToast");
+    if (shareBtn) {
+        shareBtn.addEventListener("click", () => {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                shareToast.style.display = "block";
+                setTimeout(() => { shareToast.style.display = "none"; }, 3000);
+            });
         });
+    }
 
+    // ──────────────────────────── 3. Wishlist button ────────────────────────────
+    const saveWishlistBtn = document.getElementById("saveWishlistBtn");
+    const saveWishlistIcon = document.getElementById("saveWishlistIcon");
+    const listingId = "<%= doc._id %>";
+    let wishlist = JSON.parse(localStorage.getItem("stayfinder_wishlist") || "[]");
 
-        L.marker([geometry.lat, geometry.lng], {
-                icon: redIcon
-            })
-            .addTo(map)
-            .bindPopup("<%= doc.location %>")
-            .openPopup();
-    </script>
+    function updateWishlistBtn() {
+        if (wishlist.includes(listingId)) {
+            saveWishlistIcon.classList.remove("fa-regular");
+            saveWishlistIcon.classList.add("fa-solid");
+            saveWishlistIcon.style.color = "#e0245e";
+            saveWishlistBtn.style.borderColor = "#e0245e";
+        } else {
+            saveWishlistIcon.classList.remove("fa-solid");
+            saveWishlistIcon.classList.add("fa-regular");
+            saveWishlistIcon.style.color = "inherit";
+            saveWishlistBtn.style.borderColor = "#e8ddd0";
+        }
+    }
+    updateWishlistBtn();
+
+    if (saveWishlistBtn) {
+        saveWishlistBtn.addEventListener("click", () => {
+            if (wishlist.includes(listingId)) {
+                wishlist = wishlist.filter(id => id !== listingId);
+            } else {
+                wishlist.push(listingId);
+            }
+            localStorage.setItem("stayfinder_wishlist", JSON.stringify(wishlist));
+            updateWishlistBtn();
+        });
+    }
+
+    // ──────────────────────────── 4. Leaflet Map ────────────────────────────
+    const geometry = <%- JSON.stringify(doc.geometry || { lat: 28.6139, lng: 77.2090 }) %>;
+    const lat = (geometry && geometry.lat) ? geometry.lat : 28.6139;
+    const lng = (geometry && geometry.lng) ? geometry.lng : 77.2090;
+
+    const map = L.map("map").setView([lat, lng], 13);
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    const redIcon = L.icon({
+        iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
+        shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+    });
+
+    L.marker([lat, lng], { icon: redIcon })
+        .addTo(map)
+        .bindPopup("<strong style='font-family:\"DM Sans\",sans-serif;'><%= doc.title %></strong><br><span style='color:#777;'><%= doc.location %>, <%= doc.country %></span>")
+        .openPopup();
+</script>

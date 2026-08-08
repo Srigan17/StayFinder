@@ -1,125 +1,835 @@
 <% layout("layouts/boilerplate") %>
 
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
+<style>
+    /* ── Main Layout ── */
+    body {
+        background: #fbf9f5;
+        font-family: 'DM Sans', sans-serif;
+    }
 
+    .main-wrapper {
+        padding-top: 1.5rem;
+        padding-bottom: 4rem;
+    }
 
-    <div class="container pt-3 pb-5" style="padding-top: 20px; padding-bottom: 48px;">
+    /* ── Search & Filter Controls ── */
+    .search-filter-card {
+        background: #ffffff;
+        border: 1px solid #e8ddd0;
+        border-radius: 50px;
+        box-shadow: 0 4px 20px rgba(61, 43, 31, 0.06);
+        padding: 6px 12px;
+        max-width: 780px;
+        margin: 0 auto 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: box-shadow 0.2s, border-color 0.2s;
+    }
 
-        <!-- Search Bar -->
-        <div class="search-section">
-            <form action="/listings" method="GET" class="search-bar">
-                <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                <input type="text" name="q" placeholder="Search destinations, listings..." value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>">
-                <button type="submit" class="search-btn">Search</button>
-            </form>
+    .search-filter-card:focus-within {
+        box-shadow: 0 6px 28px rgba(61, 43, 31, 0.12);
+        border-color: #c9973a;
+    }
+
+    .search-input-group {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        gap: 10px;
+        padding-left: 14px;
+    }
+
+    .search-input-group i {
+        color: #c9973a;
+        font-size: 1.1rem;
+    }
+
+    .search-input-group input {
+        border: none;
+        outline: none;
+        background: transparent;
+        width: 100%;
+        font-size: 0.95rem;
+        color: #3d2b1f;
+    }
+
+    .search-input-group input::placeholder {
+        color: #9e8878;
+    }
+
+    .search-action-btn {
+        background: #3d2b1f;
+        color: #faf7f2;
+        border: none;
+        padding: 9px 24px;
+        border-radius: 40px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.2s;
+        white-space: nowrap;
+    }
+
+    .search-action-btn:hover {
+        background: #c9973a;
+    }
+
+    /* ── Quick Destination Pills ── */
+    .destination-strip {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding: 4px 2px 14px;
+        scrollbar-width: none;
+        margin-bottom: 0.5rem;
+    }
+
+    .destination-strip::-webkit-scrollbar {
+        display: none;
+    }
+
+    .dest-pill {
+        padding: 6px 16px;
+        border-radius: 50px;
+        font-size: 0.82rem;
+        font-weight: 500;
+        text-decoration: none;
+        color: #5c4738;
+        background: #f1eae0;
+        border: 1px solid #e2d5c5;
+        white-space: nowrap;
+        transition: all 0.18s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .dest-pill:hover {
+        background: #3d2b1f;
+        color: #faf7f2;
+        border-color: #3d2b1f;
+    }
+
+    .dest-pill.active {
+        background: #3d2b1f;
+        color: #faf7f2;
+        border-color: #3d2b1f;
+        box-shadow: 0 2px 8px rgba(61, 43, 31, 0.2);
+    }
+
+    /* ── Category Strip ── */
+    .category-strip-container {
+        border-bottom: 1px solid #e8ddd0;
+        margin-bottom: 1.5rem;
+    }
+
+    .category-strip {
+        display: flex;
+        gap: 4px;
+        overflow-x: auto;
+        padding: 6px 0 0;
+        scrollbar-width: none;
+    }
+
+    .category-strip::-webkit-scrollbar {
+        display: none;
+    }
+
+    .cat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 18px 12px;
+        cursor: pointer;
+        white-space: nowrap;
+        flex-shrink: 0;
+        border-bottom: 2.5px solid transparent;
+        transition: all 0.15s ease;
+        color: #8c7665;
+        font-size: 0.75rem;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    .cat-item i {
+        font-size: 1.25rem;
+        transition: transform 0.15s ease;
+    }
+
+    .cat-item:hover {
+        color: #3d2b1f;
+        border-bottom-color: #3d2b1f;
+    }
+
+    .cat-item:hover i {
+        transform: translateY(-2px);
+    }
+
+    .cat-item.active {
+        color: #3d2b1f;
+        border-bottom-color: #c9973a;
+        font-weight: 700;
+    }
+
+    .cat-item.active i {
+        color: #c9973a;
+    }
+
+    /* ── Subheader Controls Bar ── */
+    .controls-bar {
+        background: #ffffff;
+        border: 1px solid #e8ddd0;
+        border-radius: 14px;
+        padding: 10px 18px;
+        margin-bottom: 1.75rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .tax-toggle-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.88rem;
+        color: #3d2b1f;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 44px;
+        height: 24px;
+    }
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #d1c7bc;
+        transition: .3s;
+        border-radius: 34px;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: .3s;
+        border-radius: 50%;
+    }
+
+    input:checked + .slider {
+        background-color: #3d2b1f;
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(20px);
+    }
+
+    .btn-view-toggle {
+        background: #faf7f2;
+        border: 1.5px solid #e8ddd0;
+        color: #3d2b1f;
+        padding: 6px 16px;
+        border-radius: 30px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        transition: all 0.18s ease;
+    }
+
+    .btn-view-toggle:hover, .btn-view-toggle.active {
+        background: #3d2b1f;
+        color: #faf7f2;
+        border-color: #3d2b1f;
+    }
+
+    /* ── Map Container ── */
+    #all-listings-map {
+        height: 520px;
+        width: 100%;
+        border-radius: 18px;
+        border: 1px solid #e8ddd0;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 30px rgba(61, 43, 31, 0.08);
+        display: none;
+    }
+
+    /* ── Listing Cards ── */
+    .listing-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        height: 100%;
+    }
+
+    .listing-card {
+        background: #ffffff;
+        border: 1px solid #e8ddd0;
+        border-radius: 18px;
+        overflow: hidden;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .listing-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 28px rgba(61, 43, 31, 0.10);
+        border-color: #c9973a;
+    }
+
+    .img-wrapper {
+        position: relative;
+        overflow: hidden;
+        height: 220px;
+    }
+
+    .listing-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+
+    .listing-card:hover .listing-img {
+        transform: scale(1.05);
+    }
+
+    .category-badge-chip {
+        position: absolute;
+        bottom: 12px;
+        left: 12px;
+        background: rgba(61, 43, 31, 0.75);
+        backdrop-filter: blur(4px);
+        color: #faf7f2;
+        font-size: 0.72rem;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 20px;
+        letter-spacing: 0.03em;
+    }
+
+    .wishlist-heart-btn {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(2px);
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        color: #7a6a5a;
+        cursor: pointer;
+        transition: all 0.18s ease;
+        z-index: 2;
+    }
+
+    .wishlist-heart-btn:hover {
+        transform: scale(1.15);
+        color: #e0245e;
+    }
+
+    .wishlist-heart-btn.favorited {
+        color: #e0245e !important;
+    }
+
+    .wishlist-heart-btn.favorited i {
+        font-weight: 900;
+    }
+
+    .card-body-content {
+        padding: 1.1rem 1.25rem 1.25rem;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    .listing-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #3d2b1f;
+        margin: 0;
+        line-height: 1.35;
+    }
+
+    .listing-rating {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #3d2b1f;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+    }
+
+    .listing-location {
+        font-size: 0.84rem;
+        color: #7a6a5a;
+        margin: 4px 0 8px;
+    }
+
+    .listing-desc {
+        font-size: 0.82rem;
+        color: #6e6155;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .listing-footer {
+        border-top: 1px solid #f0e8df;
+        padding-top: 0.85rem;
+        margin-top: auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .price-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .base-price {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #3d2b1f;
+    }
+
+    .tax-badge {
+        font-size: 0.72rem;
+        color: #8c7665;
+        display: none;
+    }
+
+    .view-arrow-link {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #c9973a;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: transform 0.15s ease;
+    }
+
+    .listing-card:hover .view-arrow-link {
+        transform: translateX(4px);
+    }
+
+    /* ── Empty State ── */
+    .empty-catalog-state {
+        text-align: center;
+        padding: 5rem 1rem;
+        background: #ffffff;
+        border-radius: 20px;
+        border: 1px solid #e8ddd0;
+        max-width: 600px;
+        margin: 2rem auto;
+    }
+</style>
+
+<div class="main-wrapper">
+    <div class="container">
+
+        <!-- ── Search & Filter Bar ── -->
+        <form action="/listings" method="GET" class="search-filter-card">
+            <% if (typeof category !== 'undefined' && category) { %>
+                <input type="hidden" name="category" value="<%= category %>">
+            <% } %>
+
+            <div class="search-input-group">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" name="q" placeholder="Search by city, country, title, or category (e.g. Goa, Paris, Villa)..." value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>">
+            </div>
+
+            <!-- Sort selector inside search -->
+            <select name="sort" class="form-select border-0 bg-transparent text-secondary" style="max-width: 170px; font-size: 0.85rem; outline: none; box-shadow: none;">
+                <option value="">Sort: Featured</option>
+                <option value="price-asc" <%= typeof sort !== 'undefined' && sort === 'price-asc' ? 'selected' : '' %>>Price: Low to High</option>
+                <option value="price-desc" <%= typeof sort !== 'undefined' && sort === 'price-desc' ? 'selected' : '' %>>Price: High to Low</option>
+                <option value="rating-desc" <%= typeof sort !== 'undefined' && sort === 'rating-desc' ? 'selected' : '' %>>Top Rated</option>
+            </select>
+
+            <button type="submit" class="search-action-btn">
+                Search
+            </button>
+        </form>
+
+        <!-- ── Quick Destination Filter Pills ── -->
+        <div class="destination-strip">
+            <a href="/listings" class="dest-pill <%= (!selectedDestination && !category && !searchQuery) ? 'active' : '' %>">
+                <i class="fa-solid fa-globe"></i> All Destinations
+            </a>
+            <% const dests = ["Goa", "Manali", "Jaipur", "Udaipur", "Kerala", "Paris", "Santorini", "Swiss Alps", "Bali", "Kyoto", "Dubai", "New York"]; %>
+            <% for (let dest of dests) { %>
+                <a href="/listings?destination=<%= encodeURIComponent(dest) %>" class="dest-pill <%= (typeof selectedDestination !== 'undefined' && selectedDestination.toLowerCase() === dest.toLowerCase()) ? 'active' : '' %>">
+                    <%= dest %>
+                </a>
+            <% } %>
         </div>
 
-        <!-- Category Filter Strip -->
-        <div class="category-strip">
-            <a href="/listings?q=trending" class="cat-item <%= typeof category !== 'undefined' && category === 'trending'      ? 'active' : '' %>"><i class="fa-solid fa-fire"></i>Trending</a>
-            <a href="/listings?q=rooms" class="cat-item <%= typeof category !== 'undefined' && category === 'rooms'         ? 'active' : '' %>"><i class="fa-solid fa-door-open"></i>Rooms</a>
-            <a href="/listings?q=City" class="cat-item <%= typeof category !== 'undefined' && category === 'iconic-cities' ? 'active' : '' %>"><i class="fa-solid fa-city"></i>City</a>
-            <a href="/listings?q=Mountains" class="cat-item <%= typeof category !== 'undefined' && category === 'Mountains'     ? 'active' : '' %>"><i class="fa-solid fa-mountain"></i>Mountains</a>
-            <a href="/listings?q=Castle" class="cat-item <%= typeof category !== 'undefined' && category === 'castles'       ? 'active' : '' %>"><i class="fa-solid fa-chess-rook"></i>Castle</a>
-            <a href="/listings?q=amazing-pools" class="cat-item <%= typeof category !== 'undefined' && category === 'amazing-pools' ? 'active' : '' %>"><i class="fa-solid fa-water-ladder"></i>Amazing Pools</a>
-            <a href="/listings?q=Beach" class="cat-item <%= category === 'Beach' ? 'active' : '' %>">
-                <i class="fa-solid fa-umbrella-beach"></i>Beach
-            </a>
-
-            <a href="/listings?q=Mountains" class="cat-item <%= category === 'Mountains' ? 'active' : '' %>">
-                <i class="fa-solid fa-mountain"></i>Mountains
-            </a>
-
-            <a href="/listings?q=Camping" class="cat-item <%= category === 'Camping' ? 'active' : '' %>">
-                <i class="fa-solid fa-tent"></i>Camping
-            </a>
-
-            <a href="/listings?q=Arctic" class="cat-item <%= category === 'Arctic' ? 'active' : '' %>">
-                <i class="fa-solid fa-snowflake"></i>Arctic
-            </a>
-
-            <a href="/listings?q=Desert" class="cat-item <%= category === 'Desert' ? 'active' : '' %>">
-                <i class="fa-solid fa-sun"></i>Desert
-            </a>
-
-            <a href="/listings?q=Forest" class="cat-item <%= category === 'Forest' ? 'active' : '' %>">
-                <i class="fa-solid fa-tree"></i>Forest
-            </a>
-
-            <a href="/listings?q=Lake" class="cat-item <%= category === 'Lake' ? 'active' : '' %>">
-                <i class="fa-solid fa-water"></i>Lake
-            </a>
-
-            <a href="/listings?q=City" class="cat-item <%= category === 'City' ? 'active' : '' %>">
-                <i class="fa-solid fa-city"></i>City
-            </a>
-
-            <a href="/listings?q=Countryside" class="cat-item <%= category === 'Countryside' ? 'active' : '' %>">
-                <i class="fa-solid fa-house-flag"></i>Countryside
-            </a>
-
-            <a href="/listings?q=Historical" class="cat-item <%= category === 'Historical' ? 'active' : '' %>">
-                <i class="fa-solid fa-landmark"></i>Historical
-            </a>
-
-            <a href="/listings?q=Castle" class="cat-item <%= category === 'Castle' ? 'active' : '' %>">
-                <i class="fa-solid fa-chess-rook"></i>Castle
-            </a>
-
-            <a href="/listings?q=Farm" class="cat-item <%= category === 'Farm' ? 'active' : '' %>">
-                <i class="fa-solid fa-tractor"></i>Farm
-            </a>
-
-            <a href="/listings?q=Luxury" class="cat-item <%= category === 'Luxury' ? 'active' : '' %>">
-                <i class="fa-solid fa-gem"></i>Luxury
-            </a>
-
-            <a href="/listings?q=Adventure" class="cat-item <%= category === 'Adventure' ? 'active' : '' %>">
-                <i class="fa-solid fa-person-hiking"></i>Adventure
-            </a>
+        <!-- ── Category Strip ── -->
+        <div class="category-strip-container">
+            <div class="category-strip">
+                <a href="/listings" class="cat-item <%= (!category || category === '') ? 'active' : '' %>">
+                    <i class="fa-solid fa-compass"></i> All Stays
+                </a>
+                <a href="/listings?category=Beach" class="cat-item <%= category === 'Beach' ? 'active' : '' %>">
+                    <i class="fa-solid fa-umbrella-beach"></i> Beach
+                </a>
+                <a href="/listings?category=Mountains" class="cat-item <%= category === 'Mountains' ? 'active' : '' %>">
+                    <i class="fa-solid fa-mountain-sun"></i> Mountains
+                </a>
+                <a href="/listings?category=Luxury" class="cat-item <%= category === 'Luxury' ? 'active' : '' %>">
+                    <i class="fa-solid fa-gem"></i> Luxury
+                </a>
+                <a href="/listings?category=City" class="cat-item <%= category === 'City' ? 'active' : '' %>">
+                    <i class="fa-solid fa-city"></i> City
+                </a>
+                <a href="/listings?category=Historical" class="cat-item <%= category === 'Historical' ? 'active' : '' %>">
+                    <i class="fa-solid fa-landmark-dome"></i> Historical
+                </a>
+                <a href="/listings?category=Castle" class="cat-item <%= category === 'Castle' ? 'active' : '' %>">
+                    <i class="fa-solid fa-chess-rook"></i> Castle
+                </a>
+                <a href="/listings?category=Lake" class="cat-item <%= category === 'Lake' ? 'active' : '' %>">
+                    <i class="fa-solid fa-water"></i> Lake
+                </a>
+                <a href="/listings?category=Forest" class="cat-item <%= category === 'Forest' ? 'active' : '' %>">
+                    <i class="fa-solid fa-tree"></i> Forest
+                </a>
+                <a href="/listings?category=Adventure" class="cat-item <%= category === 'Adventure' ? 'active' : '' %>">
+                    <i class="fa-solid fa-person-hiking"></i> Adventure
+                </a>
+                <a href="/listings?category=Camping" class="cat-item <%= category === 'Camping' ? 'active' : '' %>">
+                    <i class="fa-solid fa-tent"></i> Camping
+                </a>
+                <a href="/listings?category=Desert" class="cat-item <%= category === 'Desert' ? 'active' : '' %>">
+                    <i class="fa-solid fa-sun"></i> Desert
+                </a>
+                <a href="/listings?category=Arctic" class="cat-item <%= category === 'Arctic' ? 'active' : '' %>">
+                    <i class="fa-solid fa-snowflake"></i> Arctic
+                </a>
+                <a href="/listings?category=Countryside" class="cat-item <%= category === 'Countryside' ? 'active' : '' %>">
+                    <i class="fa-solid fa-house-chimney-window"></i> Countryside
+                </a>
+                <a href="/listings?category=Farm" class="cat-item <%= category === 'Farm' ? 'active' : '' %>">
+                    <i class="fa-solid fa-tractor"></i> Farm
+                </a>
+            </div>
         </div>
 
-        <!-- Page Heading -->
-        <div class="text-center mb-5 mt-4">
-            <h2 class="page-title mb-1">Explore Listings</h2>
-            <p class="page-subtitle mb-0">Find your perfect stay</p>
-        </div>
+        <!-- ── Subheader Controls Bar ── -->
+        <div class="controls-bar">
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge" style="background: #faf7f2; color: #3d2b1f; border: 1px solid #e8ddd0; padding: 6px 12px; font-weight: 600; font-size: 0.85rem;">
+                    <%= allListings.length %> <%= allListings.length === 1 ? 'Stay' : 'Stays' %> Available
+                </span>
 
-        <!-- Listing Cards -->
-        <div class="row g-4">
-            <% for(let listing of allListings) { %>
-                <div class="col-lg-4 col-md-6">
-                    <a href="/listings/<%= listing._id %>" class="listing-link">
-                        <div class="listing-card h-100">
-                            <div class="img-wrapper">
-                                <img src="<%= listing.image.url %>" class="listing-img" alt="<%= listing.title %>">
-                                <div class="wishlist-btn"><i class="fa-regular fa-heart"></i></div>
-                            </div>
-                            <div class="card-body-inner d-flex flex-column">
-                                <div class="d-flex justify-content-between align-items-start gap-2 mb-1">
-                                    <h5 class="listing-title">
-                                        <%= listing.title %>
-                                    </h5>
-                                    <div class="listing-rating"><i class="fa-solid fa-star star-icon"></i> 4.9</div>
-                                </div>
-                                <p class="listing-location">
-                                    <i class="fa-solid fa-location-dot pin-icon"></i>
-                                    <%= listing.location %>,
-                                        <%= listing.country %>
-                                </p>
-                                <p class="listing-desc">
-                                    <%= listing.description %>...</p>
-                                <div class="listing-footer d-flex justify-content-between align-items-center mt-auto">
-                                    <div class="listing-price">₹
-                                        <%= listing.price.toLocaleString("en-IN") %><span>/ night</span></div>
-                                    <div class="cta-link d-flex align-items-center gap-1">View details <i class="fa-solid fa-arrow-right"></i></div>
-                                </div>
-                            </div>
-                        </div>
+                <% if (searchQuery || category || selectedDestination || sort) { %>
+                    <a href="/listings" class="btn btn-sm btn-outline-secondary" style="border-radius: 20px; font-size: 0.8rem;">
+                        <i class="fa-solid fa-xmark me-1"></i> Clear Filters
                     </a>
-                </div>
                 <% } %>
+            </div>
+
+            <div class="d-flex align-items-center gap-3">
+                <!-- Tax toggle switch -->
+                <label class="tax-toggle-wrapper">
+                    <span>Display total with taxes (18% GST)</span>
+                    <div class="switch">
+                        <input type="checkbox" id="taxSwitch">
+                        <span class="slider"></span>
+                    </div>
+                </label>
+
+                <!-- Map / Grid Toggle -->
+                <button type="button" class="btn-view-toggle" id="viewToggleBtn">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                    <span id="viewToggleText">Show Map</span>
+                </button>
+            </div>
         </div>
+
+        <!-- ── Interactive Map View (Collapsible) ── -->
+        <div id="all-listings-map"></div>
+
+        <!-- ── Listings Cards Grid ── -->
+        <% if (!allListings || allListings.length === 0) { %>
+            <div class="empty-catalog-state">
+                <div style="font-size: 3rem; color: #c9973a; margin-bottom: 1rem;">
+                    <i class="fa-regular fa-compass"></i>
+                </div>
+                <h3 style="font-family: 'Playfair Display', serif; color: #3d2b1f; margin-bottom: 0.5rem;">
+                    No Stays Found
+                </h3>
+                <p style="color: #7a6a5a; max-width: 420px; margin: 0 auto 1.5rem; font-size: 0.95rem;">
+                    We couldn't find any listings matching your search criteria. Try removing filters or searching for popular locations like Goa, Paris, Manali, or Bali.
+                </p>
+                <a href="/listings" class="btn btn-dark" style="background: #3d2b1f; border-radius: 8px; padding: 0.7rem 1.8rem;">
+                    Reset All Filters
+                </a>
+            </div>
+        <% } else { %>
+            <div class="row g-4" id="listingsContainer">
+                <% for (let listing of allListings) { %>
+                    <div class="col-lg-4 col-md-6 listing-item" data-price="<%= listing.price %>" data-id="<%= listing._id %>">
+                        <div class="listing-card">
+                            <div class="img-wrapper">
+                                <a href="/listings/<%= listing._id %>" class="d-block w-100 h-100">
+                                    <img src="<%= listing.image.url %>" class="listing-img" alt="<%= listing.title %>" loading="lazy">
+                                </a>
+                                <span class="category-badge-chip">
+                                    <%= listing.category || 'City' %>
+                                </span>
+                                <button type="button" class="wishlist-heart-btn" data-listing-id="<%= listing._id %>" title="Save to Wishlist">
+                                    <i class="fa-regular fa-heart"></i>
+                                </button>
+                            </div>
+
+                            <a href="/listings/<%= listing._id %>" class="listing-link">
+                                <div class="card-body-content">
+                                    <div class="d-flex justify-content-between align-items-start gap-2 mb-1">
+                                        <h5 class="listing-title">
+                                            <%= listing.title %>
+                                        </h5>
+                                        <div class="listing-rating">
+                                            <i class="fa-solid fa-star text-warning" style="font-size: 0.8rem;"></i>
+                                            <%= listing.rating || 4.9 %>
+                                        </div>
+                                    </div>
+
+                                    <p class="listing-location">
+                                        <i class="fa-solid fa-location-dot text-danger" style="font-size: 0.75rem;"></i>
+                                        <%= listing.location %>, <%= listing.country %>
+                                    </p>
+
+                                    <p class="listing-desc">
+                                        <%= listing.description %>
+                                    </p>
+
+                                    <div class="listing-footer">
+                                        <div class="price-container">
+                                            <div class="base-price">
+                                                <span class="price-val">₹<%= Number(listing.price).toLocaleString("en-IN") %></span>
+                                                <span style="font-size: 0.75rem; font-weight: 400; color: #888;">/ night</span>
+                                            </div>
+                                            <span class="tax-badge">includes 18% GST (₹<%= Math.round(listing.price * 1.18).toLocaleString("en-IN") %> total)</span>
+                                        </div>
+                                        <span class="view-arrow-link">
+                                            Details <i class="fa-solid fa-arrow-right"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        <% } %>
 
     </div>
+</div>
+
+<!-- ── Leaflet Scripts for Map & Interactive Filters ── -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    // ──────────────────────────── 1. Tax Switch Feature ────────────────────────────
+    const taxSwitch = document.getElementById("taxSwitch");
+    const listingItems = document.querySelectorAll(".listing-item");
+
+    if (taxSwitch) {
+        taxSwitch.addEventListener("change", function() {
+            const showWithTax = this.checked;
+            listingItems.forEach(item => {
+                const basePrice = parseFloat(item.dataset.price);
+                const priceValEl = item.querySelector(".price-val");
+                const taxBadgeEl = item.querySelector(".tax-badge");
+
+                if (showWithTax) {
+                    const priceWithTax = Math.round(basePrice * 1.18);
+                    priceValEl.textContent = "₹" + priceWithTax.toLocaleString("en-IN");
+                    taxBadgeEl.style.display = "block";
+                } else {
+                    priceValEl.textContent = "₹" + basePrice.toLocaleString("en-IN");
+                    taxBadgeEl.style.display = "none";
+                }
+            });
+        });
+    }
+
+    // ──────────────────────────── 2. Wishlist Heart Feature (localStorage) ────────────────────────────
+    const wishlistBtns = document.querySelectorAll(".wishlist-heart-btn");
+    let savedListings = JSON.parse(localStorage.getItem("stayfinder_wishlist") || "[]");
+
+    function syncWishlistUI() {
+        wishlistBtns.forEach(btn => {
+            const listingId = btn.dataset.listingId;
+            const icon = btn.querySelector("i");
+            if (savedListings.includes(listingId)) {
+                btn.classList.add("favorited");
+                icon.classList.remove("fa-regular");
+                icon.classList.add("fa-solid");
+            } else {
+                btn.classList.remove("favorited");
+                icon.classList.remove("fa-solid");
+                icon.classList.add("fa-regular");
+            }
+        });
+    }
+    syncWishlistUI();
+
+    wishlistBtns.forEach(btn => {
+        btn.addEventListener("click", function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const listingId = this.dataset.listingId;
+            if (savedListings.includes(listingId)) {
+                savedListings = savedListings.filter(id => id !== listingId);
+            } else {
+                savedListings.push(listingId);
+            }
+            localStorage.setItem("stayfinder_wishlist", JSON.stringify(savedListings));
+            syncWishlistUI();
+        });
+    });
+
+    // ──────────────────────────── 3. Interactive Map View Feature ────────────────────────────
+    const viewToggleBtn = document.getElementById("viewToggleBtn");
+    const viewToggleText = document.getElementById("viewToggleText");
+    const mapContainer = document.getElementById("all-listings-map");
+    let leafletMapInstance = null;
+    let mapVisible = false;
+
+    // Listings data for map
+    const mapListingsData = <%- JSON.stringify(allListings.map(l => ({
+        id: l._id,
+        title: l.title,
+        price: l.price,
+        location: l.location,
+        country: l.country,
+        category: l.category,
+        image: l.image ? l.image.url : '',
+        lat: l.geometry && l.geometry.lat ? l.geometry.lat : 20.5937,
+        lng: l.geometry && l.geometry.lng ? l.geometry.lng : 78.9629
+    }))) %>;
+
+    if (viewToggleBtn && mapContainer) {
+        viewToggleBtn.addEventListener("click", function() {
+            mapVisible = !mapVisible;
+
+            if (mapVisible) {
+                mapContainer.style.display = "block";
+                viewToggleText.textContent = "Show Grid";
+                this.classList.add("active");
+
+                if (!leafletMapInstance) {
+                    initLeafletMap();
+                } else {
+                    leafletMapInstance.invalidateSize();
+                }
+
+                mapContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                mapContainer.style.display = "none";
+                viewToggleText.textContent = "Show Map";
+                this.classList.remove("active");
+            }
+        });
+    }
+
+    function initLeafletMap() {
+        if (!mapListingsData || mapListingsData.length === 0) return;
+
+        // Calculate center or default to first listing
+        const first = mapListingsData[0];
+        leafletMapInstance = L.map("all-listings-map").setView([first.lat, first.lng], 4);
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(leafletMapInstance);
+
+        const markersGroup = L.featureGroup();
+
+        mapListingsData.forEach(item => {
+            if (item.lat && item.lng) {
+                // Custom price pill marker
+                const priceMarkerHtml = `
+                    <div style="background: #3d2b1f; color: #fff; border-radius: 20px; padding: 4px 10px; font-weight: 700; font-size: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.3); border: 2px solid #fff; white-space: nowrap; cursor: pointer;">
+                        ₹${Number(item.price).toLocaleString('en-IN')}
+                    </div>
+                `;
+
+                const customPriceIcon = L.divIcon({
+                    html: priceMarkerHtml,
+                    className: 'custom-map-price-marker',
+                    iconSize: [60, 26],
+                    iconAnchor: [30, 13]
+                });
+
+                const popupHtml = `
+                    <div style="width: 220px; font-family: 'DM Sans', sans-serif;">
+                        <img src="${item.image}" style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 8px;" alt="${item.title}">
+                        <div style="font-weight: 700; font-size: 14px; margin-bottom: 2px; color: #3d2b1f; line-height: 1.2;">${item.title}</div>
+                        <div style="font-size: 12px; color: #7a6a5a; margin-bottom: 6px;"><i class="fa-solid fa-location-dot text-danger"></i> ${item.location}, ${item.country}</div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; padding-top: 6px;">
+                            <div style="font-weight: 700; color: #3d2b1f;">₹${Number(item.price).toLocaleString('en-IN')}<span style="font-size: 10px; font-weight: 400; color: #888;">/night</span></div>
+                            <a href="/listings/${item.id}" style="font-size: 12px; background: #3d2b1f; color: #fff; padding: 3px 8px; border-radius: 4px; text-decoration: none;">View</a>
+                        </div>
+                    </div>
+                `;
+
+                const marker = L.marker([item.lat, item.lng], { icon: customPriceIcon })
+                    .bindPopup(popupHtml);
+
+                markersGroup.addLayer(marker);
+            }
+        });
+
+        markersGroup.addTo(leafletMapInstance);
+
+        if (mapListingsData.length > 1) {
+            leafletMapInstance.fitBounds(markersGroup.getBounds().pad(0.15));
+        }
+    }
+</script>
